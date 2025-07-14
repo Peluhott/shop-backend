@@ -12,3 +12,61 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id          Int     @id @default(autoincrement())
+  username    String  @unique
+  password    String
+  information Json
+  is_admin    Boolean
+  orders      Order[]
+  cart        Cart?
+}
+
+model Cart {
+  id         Int        @id @default(autoincrement())
+  user_id    Int        @unique
+  cart_items CartItem[]
+  user       User       @relation(fields: [user_id], references: [id])
+}
+
+model CartItem {
+  id         Int     @id @default(autoincrement())
+  cart_id    Int
+  product_id Int
+  quantity   Int     @default(1)
+  cart       Cart    @relation(fields: [cart_id], references: [id])
+  product    Product @relation(fields: [product_id], references: [id])
+}
+
+model Order {
+  id               Int                @id @default(autoincrement())
+  user_id          Int
+  total            Int
+  user             User               @relation(fields: [user_id], references: [id])
+  created_at       DateTime           @default(now())
+  filled           Boolean
+  ordered_products Ordered_Products[]
+}
+
+model Ordered_Products {
+  id         Int     @id @default(autoincrement())
+  order_id   Int
+  product_id Int
+  quantity   Int
+  unit_price Int // to know what the price was of product at time of sale incase it has changed
+  product    Product @relation(fields: [product_id], references: [id])
+  order      Order   @relation(fields: [order_id], references: [id])
+}
+
+model Product {
+  id               Int                @id @default(autoincrement())
+  name             String
+  category         String
+  picture          String
+  description      String
+  price            Int
+  stock            Int
+  ordered_products Ordered_Products[]
+  cart_item        CartItem[]
+}
