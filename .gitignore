@@ -1,0 +1,24 @@
+# Node modules
+node_modules/
+
+# Environment variables 
+.env
+
+# Prisma artifacts (client, cache, engines)
+prisma/dev.db
+prisma/migrations/
+prisma/.env
+prisma/generated/
+
+# TypeScript build output
+dist/
+build/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+
