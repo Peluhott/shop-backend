@@ -17,7 +17,7 @@ model User {
   id          Int     @id @default(autoincrement())
   username    String  @unique
   password    String
-  information Json
+  information Json?
   is_admin    Boolean
   orders      Order[]
   cart        Cart?
