@@ -56,7 +56,7 @@ model Ordered_Products {
   quantity   Int
   unit_price Int // to know what the price was of product at time of sale incase it has changed
   product    Product @relation(fields: [product_id], references: [id])
-  order      Order   @relation(fields: [order_id], references: [id])
+  order      Order   @relation(fields: [order_id], references: [id]) // make sure to put logic to delete items if order is cancelled or deleted
 }
 
 model Product {
