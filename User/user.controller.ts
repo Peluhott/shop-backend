@@ -1,8 +1,9 @@
 import bcrypt from 'bcrypt'
 import * as userQueries from './user.repository'
 import jwt from 'jsonwebtoken'
+import { Request, Response } from 'express'
 
-export async function loginUser(login: any) {
+export async function loginUser(login: any) { 
    const {username, password} = login
     const user = await userQueries.getUserByUsername(username);
     if(!user){
@@ -26,3 +27,30 @@ export async function loginUser(login: any) {
 
     return token
 }
+
+export async function createUser(req: Request,res: Response) {
+    try {
+        const { name, username, password } = req.body as {
+            name: string;
+            username: string;
+            password: string;
+          };
+          
+            const hashedPassword = await bcrypt.hash(password,10)
+            await userQueries.insertUser(name,username,hashedPassword)
+            // code to create cart for the user
+            res.status(201).json({message: 'user created successfuly'})
+        } catch (error) {
+            console.error("Error creating user:", error);
+            res.status(500).json({ message: "Internal server error" });
+        }
+}
+
+// form for user information
+
+//return user cart 
+
+//return user information 
+
+//return user orders
+

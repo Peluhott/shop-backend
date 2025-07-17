@@ -1,6 +1,6 @@
 import prisma from '../shared/prisma'
 
-export async function createUser(name: string, username: string, password: string,) {
+export async function insertUser(name: string, username: string, password: string,) {
     await prisma.user.create({
         data: {
             username,

@@ -9,4 +9,5 @@ dotenv.config();
 const app = express()
 
 //fill out rest later
+app.use(express.json())
 app.use(passport.initialize)
