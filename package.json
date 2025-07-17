@@ -18,6 +18,7 @@
     "prisma": "^6.11.1"
   },
   "devDependencies": {
+    "@types/multer": "^2.0.0",
     "@types/node": "^24.0.13",
     "nodemon": "^3.1.10",
     "ts-node": "^10.9.2",

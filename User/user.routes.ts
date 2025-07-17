@@ -1,11 +1,12 @@
 import express from 'express'
+import {Request, Response} from 'express'
 import { loginUser } from './user.controller'
 
 const router = express.Router();
 
 
 
-router.post("/login", async (req: any, res: any) => {
+router.post("/login", async (req: Request, res: Response) => {
     try {
       const token = await loginUser(req.body);
       return res.json({ token });
