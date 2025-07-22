@@ -23,8 +23,18 @@ export async function getAllProducts() {
     return await prisma.product.findMany()
 }
 
-export async function updateProduct(params:type) {
-    // figure this out later
+export async function updateProduct(productId: number, name: string, category: string, picture: string, description: string, price: number, stock: number ) {
+    await prisma.product.update({
+        where:{id:productId},
+        data: {
+            name: name,
+            category: category,
+            picture:picture,
+            description:description,
+            price:price,
+            stock:stock
+        }
+    })
 }
 
 export async function deleteProduct(id: number) {

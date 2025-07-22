@@ -10,4 +10,5 @@ const app = express()
 
 //fill out rest later
 app.use(express.json())
+app.use(express.urlencoded({extended:true}))
 app.use(passport.initialize)
