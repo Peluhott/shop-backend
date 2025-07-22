@@ -20,12 +20,14 @@ export async function clearCart(cartId: number){
     })
 }
 
-export async function addItemToCart(cartId: number, productId: number, quantity: number){
+export async function addItemToCart(cartId: number, productId: number, quantity: number, unitprice: number){
     await prisma.cartItem.create({
         data: {
             cart_id: cartId,
             product_id: productId,
-            quantity: quantity
+            quantity: quantity,
+            unitprice: unitprice
+            
         }
     })
 }
@@ -42,8 +44,31 @@ export async function getCartItemsByCart(cartID: number) {
     })
 }
 
-export async function getCartTotal(params:type) {
-    //figure this out later might have to create function in product to return price
+export async function increaseCartItemStock(cartItem_id: number,change: number) {
+    await prisma.cartItem.update({
+        where:{id:cartItem_id},
+        data: {quantity:change}
+    })
+}
+
+export async function decreaseCartItemStock(cartItem_id: number, change: number){
+    await prisma.cartItem.update({
+        where:{id:cartItem_id},
+        data: {quantity:change}
+    })
+}
+
+export async function getCartTotal(cartID: number) {
+    const items = await prisma.cartItem.findMany({
+        where: {cart_id:cartID
+        }
+    })
+
+    if(!items){
+        return 0;
+    }
+    const subtotal = items.reduce((sum, item) => sum + item.quantity * item.unitprice, 0);
+    return subtotal;
 }
 
 export async function isProductInCart(cartId: number, productID: number) {
