@@ -6,7 +6,7 @@ export async function insertUser(name: string, username: string, password: strin
             username,
             password,
             is_admin: false,
-            information: {}
+            
         }
     });
 }
@@ -49,5 +49,27 @@ export async function promoteUser(id: number) {
     await prisma.user.update({
         where:{id},
         data: {is_admin : true}
+    });
+}
+
+export async function getUserInfo(id: number){
+    return await prisma.userInfo.findUnique({ // might return null in some fields
+        where:{userId:id} 
+    })
+}
+
+export async function updateUserInfo(userid: number, email: string, data: Partial<Omit<UserInfoUpdate, 'email'>>){
+    await prisma.userInfo.update({
+        where:{userId:userid},
+        data: {
+            email,
+            ...(data.address && {phone: data.address}),
+            ...(data.city && {city: data.city}),
+            ...(data.state && {state: data.state}),
+            ...(data.country && {state: data.country}),
+            ...(data.age !== undefined && {age: data.age}),
+            ...(data.gender && {gender: data.gender})
+        }
+
     });
 }
