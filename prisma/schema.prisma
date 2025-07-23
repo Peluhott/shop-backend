@@ -14,13 +14,28 @@ datasource db {
 }
 
 model User {
-  id          Int     @id @default(autoincrement())
-  username    String  @unique
-  password    String
-  information Json?
-  is_admin    Boolean
-  orders      Order[]
-  cart        Cart?
+  id       Int    @id @default(autoincrement())
+  username String @unique
+  password String
+
+  is_admin Boolean
+  orders   Order[]
+  cart     Cart?
+  userinfo UserInfo?
+}
+
+model UserInfo {
+  id      Int     @id @default(autoincrement())
+  userId  Int     @unique
+  email   String  @unique
+  address String?
+  city    String?
+  state   String?
+  zipcode String?
+  country String?
+  age     Int?
+  gender  String?
+  user    User    @relation(fields: [userId], references: [id])
 }
 
 model Cart {

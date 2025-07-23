@@ -52,5 +52,4 @@ export async function createUser(req: Request,res: Response) {
 
 //return user information 
 
-//return user orders
 
