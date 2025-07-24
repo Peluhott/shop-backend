@@ -53,6 +53,8 @@ model CartItem {
   unitprice  Int
   cart       Cart    @relation(fields: [cart_id], references: [id])
   product    Product @relation(fields: [product_id], references: [id])
+
+  @@unique([cart_id, product_id]) // used to delete items
 }
 
 model Order {
