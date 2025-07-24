@@ -1,7 +1,7 @@
 import {Request , Response} from 'express'
 import * as cartQueries from './cart.repository'
 import { createOrder } from '../Order/order.repository'
-
+// check all status codes to make sure right one were used
 export async function retrieveCartForUser(req:Request, res: Response) {
    try {
     if(!req.user || !req.user.id){
@@ -22,17 +22,21 @@ export async function retrieveCartForUser(req:Request, res: Response) {
 export async function removeItemFromCart(req : Request, res: Response) {
     try { // add validation
        const productID = parseInt(req.params.id,10)
-        await cartQueries.deleteItemFromCart(productID)
+       const cart = await cartQueries.getCartByUser(req.user.id)
+        await cartQueries.deleteItemFromCart(cart.id, productID)
         return res.status(204).send()
     } catch (error) {
         res.status(404).json({message:'unable to delete item'})
     }
 }
 
-export async function addItemFromCart(req : Request, res: Response) {
-    try { // add validation
-        const {cartID, productId, quantity = 1, unitPrice} = req.body
-        await cartQueries.addItemToCart(cartID,productId,quantity,unitPrice)
+export async function addItemToCart(req : Request, res: Response) {
+   
+    try { // add validation later
+        const cart = await cartQueries.getCartByUser(req.user.id)
+        
+        const {productId, quantity = 1, unitPrice} = req.body
+        await cartQueries.addItemToCart(cart.id,productId,quantity,unitPrice)
         return res.status(204).send()
     } catch (error) {
         res.status(404).json({message:'item insert failed'})
@@ -41,9 +45,11 @@ export async function addItemFromCart(req : Request, res: Response) {
 
 export async function increaseQuantityItemFromCart(req : Request, res: Response) {
     try { // add validation
-        const itemid = parseInt(req.params.id, 10);
+        const cart = await cartQueries.getCartByUser(req.user.id)
+        const productID = parseInt(req.params.id, 10);
         const {quantity} = req.body
-        await cartQueries.increaseCartItemStock(itemid,quantity)
+        const cartItem = await cartQueries.getCartItemFromCart(cart.id, productID)
+        await cartQueries.increaseCartItemStock(cartItem.id,quantity)
         return res.status(204).send()
     } catch (error) {
         res.status(404).json({message:'increase failed'})
@@ -51,9 +57,11 @@ export async function increaseQuantityItemFromCart(req : Request, res: Response)
 }
 export async function decreaseQuantityItemFromCart(req : Request, res: Response) {
     try { // add validation
-        const itemid = parseInt(req.params.id, 10);
+        const cart = await cartQueries.getCartByUser(req.user.id)
+        const productID = parseInt(req.params.id, 10);
         const {quantity} = req.body
-        await cartQueries.decreaseCartItemStock(itemid,quantity)
+        const cartItem = await cartQueries.getCartItemFromCart(cart.id, productID)
+        await cartQueries.decreaseCartItemStock(cartItem.id,quantity)
         return res.status(204).send()
     } catch (error) {
         res.status(404).json({message:'decrease failed'})
@@ -61,11 +69,11 @@ export async function decreaseQuantityItemFromCart(req : Request, res: Response)
 }
 export async function subtotalOfCart(req : Request, res: Response) {
     try { // add validation
-        const cartId = parseInt(req.params.id,10)
-        const subtotal = await cartQueries.getCartTotal(cartId)
-        return res.status(204).json(subtotal)
+        const cart = await cartQueries.getCartByUser(req.user.id)
+        const subtotal = await cartQueries.getCartTotal(cart.id)
+        return res.status(200).json({subtotal})
     } catch (error) {
-        return res.status(404).json({message:'could not calculate subtotal of cart'})
+        return res.status(500).json({message:'could not calculate subtotal of cart'})
     }
 }
 export async function placeOrderOfCart(req : Request, res: Response) {
@@ -77,7 +85,7 @@ export async function placeOrderOfCart(req : Request, res: Response) {
         await createOrder(userId, items, orderTotal)
         return res.status(201).json({message:'order Created successfully'})
     } catch (error) {
-        return res.status(404).json({message:'order creation failed'})
+        return res.status(500).json({message:'order creation failed'})
     }
 }
 // remove items from cart
