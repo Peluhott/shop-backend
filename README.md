@@ -23,4 +23,4 @@ Full Stack project for a shopping website
 tasks I need to go back and do 
 * check to make sure i'm using the appropriate status codes 
 * create validation middleware for the routes
-
+* optimize logic
