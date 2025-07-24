@@ -32,15 +32,23 @@ export async function addItemToCart(cartId: number, productId: number, quantity:
     })
 }
 
-export async function deleteItemFromCart(id: number) {
+export async function deleteItemFromCart(cartID: number, productID: number) {
+
     await prisma.cartItem.delete({
-        where: {id}
+        where: {cart_id_product_id: { cart_id:cartID, product_id:productID}}
     })
 }
 
 export async function getCartItemsByCart(cartID: number) {
     return await prisma.cartItem.findMany({
         where: {cart_id: cartID}
+    })
+}
+
+export async function getCartItemFromCart(cartID: number, productId: number){
+    return await prisma.cartItem.findFirst({
+        where: {cart_id:cartID, 
+            product_id:productId}
     })
 }
 
