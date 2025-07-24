@@ -46,6 +46,22 @@ export async function createUser(req: Request,res: Response) {
         }
 }
 
+export async function returnUserInfo(req: Request, res: Response) {
+    if(!req.user || !req.user.id){
+        console.log('didnt find a user')
+        return res.status(404).json({message:'user id does not exist'})
+    }
+    try {
+        const info = await userQueries.getUserInfo(req.user.id)
+        if(!info){
+            return res.status(404).json({message:'info not found for user'})
+        }
+        return res.status(200).json(info)
+    } catch (error) {
+        console.log('failed to retrieve info',error)
+        return res.status(500).json({message:'failed to retrieve info'})
+    }
+}
 // form for user information
 
 
