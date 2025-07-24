@@ -18,3 +18,9 @@ Full Stack project for a shopping website
 *create account and login
 *cart
 *place an order
+
+
+tasks I need to go back and do 
+* check to make sure i'm using the appropriate status codes 
+* create validation middleware for the routes
+
