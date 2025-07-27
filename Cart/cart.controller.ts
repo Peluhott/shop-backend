@@ -77,7 +77,8 @@ export async function subtotalOfCart(req : Request, res: Response) {
     }
 }
 export async function placeOrderOfCart(req : Request, res: Response) {
-        const { userId, items, orderTotal} = req.body
+        const userId = req.user.id
+    const {items, orderTotal} = req.body
         if(!userId || !Array.isArray(items) || items.length ==0 || typeof orderTotal !== 'number') {
             return res.status(400).json({message:'invalid input'})
         }
