@@ -44,10 +44,11 @@ export async function getProductById(req: Request, res: Response) {
 }
 
 export async function updateProductInfo(req: Request, res: Response){
-   const {id, name ,category, picture, description, price, stock} = req.body
+    const id = req.params.id
+   const {name ,category, picture, description, price, stock} = req.body
    // figure out how i'm going to handle a picture update later
-   try {
-        await productQueries.createProduct(name, category, picture, description ,price, stock);
+   try {//fix this function later
+        await productQueries.createProduct(name, category, picture, description ,price, stock); // wrong function this is suppose to be update not create
         return res.status(200).json({message:'product created successfully'})
    } catch (error) {
     console.log('product update failed', error)
