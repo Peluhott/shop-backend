@@ -1,5 +1,5 @@
 import prisma from '../shared/prisma'
-
+                                                        // check to see if this is right
 export async function createOrder(user_id: number, items: {productId: number, qty: number, unitprice: number}[], orderTotal: number) {
     return await prisma.$transaction(async (tx)=> {
         
@@ -12,7 +12,7 @@ export async function createOrder(user_id: number, items: {productId: number, qt
             }
         });
 
-        await tx.ordered_Products.createMany({
+        await tx.ordered_Products.createMany({ // check to see if this works
             data: items.map((i) => ({
                 order_id: order.id,
                 product_id: i.productId,
