@@ -8,3 +8,5 @@ orderRouter.get('/all',authenticateJWT,orderController.retrieveAllOrders)
 orderRouter.get('/unfilled',authenticateJWT,orderController.retrieveAllUnfilled)
 orderRouter.get('/filled',authenticateJWT,orderController.retrieveFilled)
 orderRouter.patch('/mark',authenticateJWT,orderController.markFilledOrUnfilled)
+
+export default orderRouter;
