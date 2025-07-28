@@ -4,10 +4,8 @@ import { createOrder } from '../Order/order.repository'
 // check all status codes to make sure right one were used
 export async function retrieveCartForUser(req:Request, res: Response) {
    try {
-    if(!req.user || !req.user.id){
-        return res.status(404).json({message: ' cart not found for user'})
-    }
-    const cart = await cartQueries.getCartByUser(req.user.id)
+    
+    const cart = await cartQueries.getCartByUser(req.user!.id)
     if(!cart || !cart.id){
         return res.status(404).json({message: ' cart not found for user'})
     }
@@ -22,54 +20,74 @@ export async function retrieveCartForUser(req:Request, res: Response) {
 export async function removeItemFromCart(req : Request, res: Response) {
     try { // add validation
        const productID = parseInt(req.params.id,10)
-       const cart = await cartQueries.getCartByUser(req.user.id)
+       const cart = await cartQueries.getCartByUser(req.user!.id)
+       if(!cart){
+        return res.status(404).json({message:'cart could not be found'})
+       }
         await cartQueries.deleteItemFromCart(cart.id, productID)
         return res.status(204).send()
     } catch (error) {
-        res.status(404).json({message:'unable to delete item'})
+        res.status(500).json({message:'unable to delete item'})
     }
 }
 
 export async function addItemToCart(req : Request, res: Response) {
    
     try { // add validation later
-        const cart = await cartQueries.getCartByUser(req.user.id)
-        
+        const cart = await cartQueries.getCartByUser(req.user!.id)
+        if(!cart){
+            return res.status(404).json({message:'cart could not be found'})
+           }
         const {productId, quantity = 1, unitPrice} = req.body
         await cartQueries.addItemToCart(cart.id,productId,quantity,unitPrice)
-        return res.status(204).send()
+        return res.status(201).send()
     } catch (error) {
-        res.status(404).json({message:'item insert failed'})
+        res.status(500).json({message:'item insert failed'})
     }
 }
 
 export async function increaseQuantityItemFromCart(req : Request, res: Response) {
     try { // add validation
-        const cart = await cartQueries.getCartByUser(req.user.id)
+        const cart = await cartQueries.getCartByUser(req.user!.id)
+        if(!cart){
+            return res.status(404).json({message:'cart could not be found'})
+           }
         const productID = parseInt(req.params.id, 10);
         const {quantity} = req.body
         const cartItem = await cartQueries.getCartItemFromCart(cart.id, productID)
+        if(!cartItem){
+            return res.status(404).json({message:'cart item could not be found'})
+        }
         await cartQueries.increaseCartItemStock(cartItem.id,quantity)
         return res.status(204).send()
     } catch (error) {
-        res.status(404).json({message:'increase failed'})
+        res.status(500).json({message:'increase failed'})
     }
 }
 export async function decreaseQuantityItemFromCart(req : Request, res: Response) {
     try { // add validation
-        const cart = await cartQueries.getCartByUser(req.user.id)
+        const cart = await cartQueries.getCartByUser(req.user!.id)
+        if(!cart){
+            return res.status(404).json({message:'cart could not be found'})
+           }
         const productID = parseInt(req.params.id, 10);
         const {quantity} = req.body
         const cartItem = await cartQueries.getCartItemFromCart(cart.id, productID)
+        if(!cartItem){
+            return res.status(404).json({message:'cart item could not be found'})
+        }
         await cartQueries.decreaseCartItemStock(cartItem.id,quantity)
         return res.status(204).send()
     } catch (error) {
-        res.status(404).json({message:'decrease failed'})
+        res.status(500).json({message:'decrease failed'})
     }
 }
 export async function subtotalOfCart(req : Request, res: Response) {
     try { // add validation
-        const cart = await cartQueries.getCartByUser(req.user.id)
+        const cart = await cartQueries.getCartByUser(req.user!.id)
+        if(!cart){
+            return res.status(404).json({message:'cart could not be found'})
+           }
         const subtotal = await cartQueries.getCartTotal(cart.id)
         return res.status(200).json({subtotal})
     } catch (error) {
@@ -77,7 +95,7 @@ export async function subtotalOfCart(req : Request, res: Response) {
     }
 }
 export async function placeOrderOfCart(req : Request, res: Response) {
-        const userId = req.user.id
+        const userId = req.user!.id
     const {items, orderTotal} = req.body
         if(!userId || !Array.isArray(items) || items.length ==0 || typeof orderTotal !== 'number') {
             return res.status(400).json({message:'invalid input'})
