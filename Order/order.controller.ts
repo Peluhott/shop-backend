@@ -65,11 +65,12 @@ export async function markFilledOrUnfilled(req: Request, res: Response) {
 
         const order = await orderQueries.getOrderById(id)
         if(!order){
-            return res.status(400).json({message:'order not found'})
+            return res.status(404).json({message:'order not found'})
         }
         if(order.filled == true){
             await orderQueries.markOrderUnfilled(id)
         } else { await orderQueries.markOrderFilled(id)}
+        return res.status(204).send();
     } catch (error) {
         console.log('error marking order', error)
         return res.status(500).json({message:'order marking failed'})
