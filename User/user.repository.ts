@@ -1,4 +1,5 @@
 import prisma from '../shared/prisma'
+import { UserInfoUpdate } from '../types/user.types';
 
 export async function insertUser(name: string, username: string, password: string,) { // change this to transaction to also create a userinfo row in table
     await prisma.user.create({
@@ -23,9 +24,9 @@ export async function getUserByUsername(username:string) {
     });
 }
 
-export async function updateUserInformation(params:type) {
+//export async function updateUserInformation(params:type) {
     // figure this one out later
-}
+//}
 
 export async function deleteUser(id: number) {
     await prisma.user.delete({

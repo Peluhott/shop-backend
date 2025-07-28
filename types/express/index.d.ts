@@ -1,4 +1,4 @@
-import { JwtPayload } from '../auth'; 
+import { JwtPayload } from "../auth";
 
 
 declare global {
@@ -6,3 +6,4 @@ declare global {
    interface User extends JwtPayload {}
  }
 }
+ export{};
