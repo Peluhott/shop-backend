@@ -73,10 +73,10 @@ export async function isProductInStock(id: number) {
     } else {return false;}
 }
 
-export async function getTopSellingProducts(params:type) {
+//export async function getTopSellingProducts(params:type) {
     //figure this out later
-}
+//}
 
-export async function getLowStockProducts(params:type) {
+//export async function getLowStockProducts(params:type) {
     // figure this out later
-}
+//}
