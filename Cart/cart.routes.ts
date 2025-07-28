@@ -2,13 +2,20 @@ import { Router } from 'express'
 const cartRouter = Router();
 import * as cartController from './cart.controller'
 import { authenticateJWT } from '../auth/auth.middleware';
+import { removeItemValidation,addItemToCartValidation, changeQuantityValidation, placeOrderValidation} from '../validation/cartValidator';
+import { validateRequest } from '../middleware/validateRequest';
 
-cartRouter.get('/', authenticateJWT,cartController.retrieveCartForUser)
-cartRouter.delete('/:productID/remove', authenticateJWT, cartController.removeItemFromCart)
-cartRouter.post('/:productID/add',authenticateJWT,cartController.addItemToCart)
-cartRouter.patch('/item/:productId/increase', authenticateJWT,cartController.increaseQuantityItemFromCart)
-cartRouter.patch('/item/:productId/decrease', authenticateJWT,cartController.decreaseQuantityItemFromCart)
+cartRouter.get('/', authenticateJWT, cartController.retrieveCartForUser)
+
+cartRouter.delete('/:productID/remove', authenticateJWT, removeItemValidation, validateRequest, cartController.removeItemFromCart)
+
+cartRouter.post('/:productID/add',authenticateJWT,addItemToCartValidation, validateRequest, cartController.addItemToCart)
+
+cartRouter.patch('/item/:productId/increase', authenticateJWT,changeQuantityValidation,validateRequest, cartController.increaseQuantityItemFromCart)
+cartRouter.patch('/item/:productId/decrease', authenticateJWT,changeQuantityValidation, validateRequest,cartController.decreaseQuantityItemFromCart)
+
 cartRouter.get('/subtotal',authenticateJWT,cartController.subtotalOfCart)
-cartRouter.post('/placeorder',authenticateJWT,cartController.placeOrderOfCart)
+
+cartRouter.post('/placeorder',authenticateJWT, placeOrderValidation, validateRequest,cartController.placeOrderOfCart)
 
 export default cartRouter;
