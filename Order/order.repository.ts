@@ -86,21 +86,21 @@ export async function getUnfilledOrders() {
     })
 }
 
-export async function getOrderBetweenDates(params:type) {
+//export async function getOrderBetweenDates(params:type) {
     // figure this out later
-}
+//}
 
-export async function getRecentOrders(params:type) {
+//export async function getRecentOrders(params:type) {
     //figure this out later
-}
+//}
 
-export async function getTopCustomersByOrder(params:type) {
+//export async function getTopCustomersByOrder(params:type) {
     //figure this out later
-}
+//}
 
-export async function getOrderSummary(params:type) {
+//export async function getOrderSummary(params:type) {
     // gives you a report of total orders, cost, items bought etc
-}
+//}
 
 // ordered products repo
 
@@ -116,10 +116,10 @@ export async function deleteOrderProductsByOrderId(id: number) {
     })
 }
 
-export async function getTopSellingProducts(timePeriod: number, numberOfProducts: number) {
+//export async function getTopSellingProducts(timePeriod: number, numberOfProducts: number) {
     // figure this out later
-}
+//}
 
-export async function getTotalSalesOfProduct(product_id: number, timePeriod: number){
+//export async function getTotalSalesOfProduct(product_id: number, timePeriod: number){
     //figure this out later
-}
+//}
