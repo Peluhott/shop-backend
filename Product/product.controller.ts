@@ -25,7 +25,7 @@ export async function createProduct(req: Request, res: Response) {
 
     try {
         await productQueries.createProduct(name, category, url, description, price, stock);
-        return res.status(200).json({message: 'product created!'})
+        return res.status(201).json({message: 'product created!'})
     } catch (error) {
         console.log('failed to create product',error)
         return res.status(500).json({message: 'product not created'})
@@ -39,7 +39,7 @@ export async function getProductById(req: Request, res: Response) {
         return res.status(200).json(product)
     } catch (error) {
         console.log('failed to retrieve product', error)
-        return res.status(400).json({message:'failed to retrieve product'})
+        return res.status(500).json({message:'failed to retrieve product'})
     }
 }
 
@@ -49,10 +49,10 @@ export async function updateProductInfo(req: Request, res: Response){
    // figure out how i'm going to handle a picture update later
    try {//fix this function later
         await productQueries.createProduct(name, category, picture, description ,price, stock); // wrong function this is suppose to be update not create
-        return res.status(200).json({message:'product created successfully'})
+        return res.status(201).json({message:'product created successfully'})
    } catch (error) {
     console.log('product update failed', error)
-    return res.status(400).json({message:'product update failed'})
+    return res.status(500).json({message:'product update failed'})
    }
 }
 //edit product information , get and post for this
@@ -63,17 +63,17 @@ export async function deleteProduct(req: Request, res: Response){
     const id = parseInt(req.params.id,10)
     try {
         await productQueries.deleteProduct(id)
-        return res.status(200).json({message:'product deleted'})
+        return res.status(204).json({message:'product deleted'})
     } catch (error) {
         console.log("product deletion failed",error)
-        return res.status(400).json({message:'product deletion failed'})
+        return res.status(500).json({message:'product deletion failed'})
     }
 }
 
 export async function returnAllProducts(req: Request, res:Response){
     try {
         const products = await productQueries.getAllProducts()
-        return res.status(204).json(products)
+        return res.status(200).json(products)
     } catch (error) {
         console.log("failed to retrieve products",error)
         return res.status(500).json({message:'failed to retrieve products'})
