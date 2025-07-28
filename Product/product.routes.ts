@@ -7,9 +7,9 @@ import { validateRequest } from '../middleware/validateRequest'
 import { productInfoValidation,  retrieveProductValidator} from '../validation/productValidator'
 
 productRouter.post('/create',authenticateJWT,checkAdmin, productInfoValidation, validateRequest,productController.createProduct)
-productRouter.get('/product/:productId',retrieveProductValidator, validateRequest, productController.getProductById)
+productRouter.get('/:productId',retrieveProductValidator, validateRequest, productController.getProductById)
 productRouter.patch('/update',authenticateJWT,checkAdmin, productInfoValidation, validateRequest, productController.updateProductInfo)
 productRouter.delete('/remove/:productId',authenticateJWT,checkAdmin, retrieveProductValidator, validateRequest, productController.deleteProduct)
-productRouter.get('/products/all', productController.returnAllProducts) // add pagination
+productRouter.get('/all', productController.returnAllProducts) // add pagination
 
 export default productRouter;
