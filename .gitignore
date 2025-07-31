@@ -3,6 +3,7 @@ node_modules/
 
 # Environment variables 
 .env
+.env.test
 
 # Prisma artifacts (client, cache, engines)
 prisma/dev.db
