@@ -26,6 +26,6 @@ app.use('/cart', cartRouter)
 app.use('/order', orderRouter)
 app.use('/product', productRouter)
 
-app.listen(5000, () => {
-    console.log('server listening on port 5000')
-})
+
+
+export default app;
