@@ -37,7 +37,7 @@ export async function createUser(req: Request,res: Response) {
           };
           
             const hashedPassword = await bcrypt.hash(password,10)
-            await userQueries.insertUser(name,username,hashedPassword)
+            await userQueries.insertUser(username,hashedPassword)
             // code to create cart for the user
             res.status(201).json({message: 'user created successfuly'})
         } catch (error) {
