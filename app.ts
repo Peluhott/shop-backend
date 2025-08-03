@@ -18,7 +18,7 @@ app.use(express.urlencoded({extended:true}))
 app.use(passport.initialize())
 
 app.use(cors({
-    origin: 'http://localhost:3000',
+    origin: 'http://localhost:5000',
     credentials: true
 }))
 app.use('/user', userRoutes);
