@@ -13,6 +13,7 @@ datasource db {
   url      = env("devDATABASE_URL")
 }
 
+// figure out what i need to index to make this db faster
 model user {
   id       Int    @id @default(autoincrement())
   username String @unique
@@ -23,7 +24,7 @@ model user {
   cart     cart?
   userinfo userInfo?
 
-  @@map("user")
+  @@map("users") //changed it to users to avoid conflit
 }
 
 model userInfo {
@@ -73,7 +74,7 @@ model order {
   filled           Boolean
   ordered_products ordered_Products[]
 
-  @@map("order")
+  @@map("orders")
 }
 
 model ordered_Products {
