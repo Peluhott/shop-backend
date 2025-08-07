@@ -32,7 +32,7 @@ export async function createProduct(req: Request, res: Response) {
     }
 }
 
-export async function getProductById(req: Request, res: Response) {
+export async function getProductById(req: Request, res: Response) { // can be used for product info as well
     const id = parseInt(req.params.id,10)
     try {
         const product = await productQueries.getProductById(id)
@@ -44,11 +44,11 @@ export async function getProductById(req: Request, res: Response) {
 }
 
 export async function updateProductInfo(req: Request, res: Response){
-    const id = req.params.id
-   const {name ,category, picture, description, price, stock} = req.body
+    const id = parseInt(req.params.id)
+   const { name ,category, picture, description, price, stock} = req.body
    // figure out how i'm going to handle a picture update later
    try {//fix this function later
-        await productQueries.createProduct(name, category, picture, description ,price, stock); // wrong function this is suppose to be update not create
+        await productQueries.updateProduct(id,name, category, picture, description ,price, stock); // wrong function this is suppose to be update not create
         return res.status(201).json({message:'product created successfully'})
    } catch (error) {
     console.log('product update failed', error)
@@ -79,6 +79,8 @@ export async function returnAllProducts(req: Request, res:Response){
         return res.status(500).json({message:'failed to retrieve products'})
     }
 }
+
+
 
 
 //get all products
