@@ -2,7 +2,7 @@ import prisma from '../shared/prisma'
 import { UserInfoUpdate } from '../types/user.types';
 
 export async function insertUser(username: string, password: string,) { // change this to transaction to also create a userinfo row in table
-    await prisma.user.create({ // took out name from arguments
+    return await prisma.user.create({ // took out name from arguments
         data: {
             
             username,
