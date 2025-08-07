@@ -12,14 +12,16 @@ export async function createOrder(user_id: number, items: {productId: number, qt
             }
         });
 
-        await tx.ordered_Products.createMany({ // check to see if this works
-            data: items.map((i) => ({
+        await tx.ordered_Products.createMany({
+            data: items.flatMap((i) =>
+              Array.from({ length: i.qty }).map(() => ({
                 order_id: order.id,
                 product_id: i.productId,
-                quantity: i.qty,
-                unit_price: i.unitprice
-            })),
-        });
+                unit_price: i.unitprice,
+              }))
+            ),
+          });
+          
 
         for(const i of items){
             await tx.product.update({
@@ -120,6 +122,6 @@ export async function deleteOrderProductsByOrderId(id: number) {
     // figure this out later
 //}
 
-//export async function getTotalSalesOfProduct(product_id: number, timePeriod: number){
-    //figure this out later
-//}
+export async function getTotalSalesOfProduct(product_id: number, timePeriod: number){
+    
+}
