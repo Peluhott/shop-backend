@@ -1,7 +1,7 @@
 import prisma from '../shared/prisma'
 
 export async function createProduct(name: string,category: string, picture: string, description: string, price: number, stock: number ) {
-    await prisma.product.create({
+    return await prisma.product.create({
         data: {
             name,
             category,
@@ -73,9 +73,9 @@ export async function isProductInStock(id: number) {
     } else {return false;}
 }
 
-//export async function getTopSellingProducts(params:type) {
-    //figure this out later
-//}
+export async function getTopSellingProducts() {
+    
+}
 
 //export async function getLowStockProducts(params:type) {
     // figure this out later
