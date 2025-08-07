@@ -1,25 +1,38 @@
 import { PrismaClient } from "@prisma/client";
 import { faker } from "@faker-js/faker";
+import bcrypt from 'bcrypt'
+import * as productQueries from '../Product/product.repository'
+import * as userQueries from '../User/user.repository'
+import * as orderQueries from '../Order/order.repository'
+import * as cartQueries from '../Cart/cart.repository'
 
-
+// learn to create seperate db one for testing and one for production 
+// add code to not run this seeder is the database is set to the production one
 
 
 const prisma = new PrismaClient();
 
 async function main() {
+    const hashedPassword = await bcrypt.hash('password',10)
+
+    await userQueries.insertUser('admin',hashedPassword)
+    
+
+    const testUser = await userQueries.insertUser("guest",hashedPassword);
+    
+    
+    
+
     await Promise.all(
         Array.from({length:30}).map( async () => {
+            const name = faker.commerce.productName();
+            const category = faker.commerce.department();
+            const picture = 'www.pictureurl.com'
+            const description = faker.commerce.productDescription()
+            const price = faker.number.int({min:1,max:150})
+            const stock = faker.number.int({min:1,max:100})
         try {
-            const product = await prisma.product.create({
-                data: {
-                    name: faker.commerce.productName(),
-                    category:faker.commerce.department(),
-                    picture: 'wwww.pricture.com',
-                    description:faker.commerce.productDescription(),
-                    price:faker.number.int({min:1, max: 150}),
-                    stock:faker.number.int({min:1, max: 100})
-                }
-            });
+            const product = await productQueries.createProduct(name, category, picture, description, price , stock)
             console.log(product.name)
         } catch (error: any) {
             console.log('didnt make product because of',error.message || error)
@@ -31,14 +44,9 @@ async function main() {
     
     await Promise.all(
         Array.from({length:10}).map( async () => {
+            const username = faker.internet.username()
             try {
-                const user = await prisma.user.create({
-                    data: {
-                        username:faker.internet.username(),
-                        password:'password',
-                        is_admin: false
-                    }
-                });
+                const user = await userQueries.insertUser(username, "password")
             await prisma.cart.create({
                 data: {user_id: user.id}
             })
@@ -54,23 +62,22 @@ async function main() {
         const carts = await prisma.cart.findMany();
 
         for(const cart of carts){
-           await Promise.all(
-            Array.from({length:3}).map(async () => {
-                try {
-                    const product = faker.helpers.arrayElement(products)
-                    await prisma.cartItem.create({
-                        data: {cart_id:cart.id,
-                            product_id:product.id,
-                            quantity:faker.number.int({min:1, max: 3}),
-                            unitprice:product.price,
+            const usedProductIds = new Set();
 
-                        }
-                    })
-                } catch (error: any) {
-                    console.log('couldnt add cart item because', error.message || error)
-                }
-            })
-           )
+            await Promise.all(
+              Array.from({ length: 3 }).map(async () => {
+                let product;
+                do {
+                  product = faker.helpers.arrayElement(products);
+                } while (usedProductIds.has(product.id));
+                
+                usedProductIds.add(product.id);
+                const quantity = faker.number.int({min:1, max:3})
+                await cartQueries.addItemToCart(cart.id, product.id, quantity, product.price)
+                
+              })
+            );
+            
         }
     } catch (error: any) {
         console.log('couldnt do anything to cart because',error.message || error)
@@ -104,16 +111,19 @@ async function main() {
                     })
                     
                     if(!order){throw new Error('no order found');}
-                    await Promise.all(cartItems.map(item =>
-                        prisma.ordered_Products.create({
-                          data: {
-                            order_id: order.id,
-                            product_id: item.product_id,
-                            quantity: item.quantity,
-                            unit_price: item.unitprice
-                          }
-                        })
-                      ));
+                    const orderedProductData = cartItems.flatMap(item =>
+                        Array.from({ length: item.quantity }, () => ({
+                          order_id: order.id,
+                          product_id: item.product_id,
+                          unit_price: item.unitprice
+                        }))
+                      );
+                      
+                      await Promise.all(
+                        orderedProductData.map(data =>
+                          prisma.ordered_Products.create({ data })
+                        )
+                      );
                 }
 
             } catch (error: any) {
@@ -123,21 +133,7 @@ async function main() {
     } catch (error) {
         
     }
-     await prisma.user.create({
-        data: {
-            username: 'admin',
-            password: 'password',
-            is_admin: true
-        }
-    })
-
-    const testUser = await prisma.user.create({
-        data: {
-            username: 'guest',
-            password: 'password',
-            is_admin: false
-        }
-    })
+    
 
     const testCart = await prisma.cart.create({
         data: {
