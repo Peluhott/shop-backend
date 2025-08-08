@@ -1,3 +1,4 @@
+import { Prisma } from '@prisma/client'
 import prisma from '../shared/prisma'
 
 export async function createProduct(name: string,category: string, picture: string, description: string, price: number, stock: number ) {
@@ -43,7 +44,7 @@ export async function deleteProduct(id: number) {
     });
 }
 
-export async function searchProductByName(name: string) {
+export async function searchProductByName(name: string) { // don't need this
     return prisma.product.findMany({
         where: {name}
     });
@@ -73,8 +74,46 @@ export async function isProductInStock(id: number) {
     } else {return false;}
 }
 
-export async function getTopSellingProducts() {
+export async function getProductByFilter<k extends keyof Prisma.productWhereInput>(filter: k, value: Prisma.productWhereInput[k]){ // only allows filters that exist in schema
+    return await prisma.product.findMany({
+        where:{[filter]:value}
+
+    })
     
+}
+
+export async function searchProductsMatching(search: string){
+    return await prisma.product.findMany({
+        where: {
+            OR:[
+                {name: {contains: search, mode: 'insensitive'}},
+                {category: {contains: search, mode: 'insensitive'}},
+                {description: {contains: search, mode: 'insensitive'}}
+                
+            ]
+        }
+    })
+}
+
+export async function getTopSellingProducts(limit : number) {
+    const topselling = await prisma.ordered_Products.groupBy({
+        by: ['product_id'],
+        _count: {product_id: true},
+        orderBy:{_count:{product_id:'desc'}},
+        take: limit
+    })
+
+    const products = await Promise.all(topselling.map(async (entry) => {
+        const product = await prisma.product.findUnique({
+            where: {id: entry.product_id},
+        });
+        return {
+            ...product, 
+        totalSold: entry._count.product_id
+        };
+    })
+);
+        return products;
 }
 
 //export async function getLowStockProducts(params:type) {
