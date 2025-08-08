@@ -2,6 +2,7 @@ import * as productQueries from './product.repository'
 import cloudinary from '../utils/cloudinary';
 import {Request, Response} from 'express'
 
+
 //create product with picture
 export async function uploadProductImage(file: Express.Multer.File){
     const result =  await cloudinary.uploader.upload(file.path, {
@@ -47,7 +48,7 @@ export async function updateProductInfo(req: Request, res: Response){
     const id = parseInt(req.params.id)
    const { name ,category, picture, description, price, stock} = req.body
    // figure out how i'm going to handle a picture update later
-   try {//fix this function later
+   try {
         await productQueries.updateProduct(id,name, category, picture, description ,price, stock); // wrong function this is suppose to be update not create
         return res.status(201).json({message:'product created successfully'})
    } catch (error) {
@@ -87,8 +88,40 @@ export async function returnAllProducts(req: Request, res:Response){
 
 //finish the ones under this later
 
-//get products by certain filters
 
-//search product
+export async function getProductsByFilter(req: Request, res: Response) {
+    const {filter, value} = req.body;
+    try {
+        const products = await productQueries.getProductByFilter(filter, value)
+        return res.status(200).json(products)
+    } catch (error: any) {
+        console.log('failed to return products', error)
+        return res.status(500).json({message:'failed to return products'})
+    }
+}
+
+export async function searchProduct(req: Request, res: Response){
+    const search = req.body;
+    try {
+        const products = await productQueries.searchProductsMatching(search);
+        return res.status(200).json(products)
+    } catch (error) {
+        console.log('unable to find products',error)
+        return res.status(500).json({message:'couldnt find products matching name'})
+    }
+}
+
+export async function getTopSellingProducts(req: Request, res: Response) {
+    const { limit } = req.query;
+    const limitNumber = parseInt(limit as string) || 5;
+    try {
+        const products = await productQueries.getTopSellingProducts(limitNumber)
+        return res.status(200).json(products)
+    } catch (error) {
+        console.log('trouble retrieving top products')
+        return res.status(500).json({message:'error retrieving top products from database'})
+    }
+}
+
 
 // change stock of product avaiable
