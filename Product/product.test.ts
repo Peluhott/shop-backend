@@ -1,5 +1,6 @@
 import request from "supertest"
 import app from '../app'
+import prisma from "../shared/prisma";
 
 
 
@@ -8,6 +9,10 @@ jest.mock('../utils/uploadImage', () => ({
 }))
 import { uploadProductImage } from "../utils/uploadImage";
 const mockUpload = uploadProductImage as jest.MockedFunction<typeof uploadProductImage>; // to use for counts or errors
+
+afterEach(() => {
+    jest.clearAllMocks();
+});
 
 describe('GET /product/all', () => {
     it('should return all products with 200 status', async () => {
@@ -60,3 +65,7 @@ describe('POST /product/create', () => {
     })
 })
 
+afterAll(async () => {
+    await prisma.$disconnect();
+    
+});
