@@ -21,5 +21,7 @@ Full Stack project for a shopping website
 
 
 tasks I need to go back and do 
-*finish making all functions
-* finish making intergration and unit tests
+
+* finish making intergration and unit tests for complicated logic
+* add redis
+* 
