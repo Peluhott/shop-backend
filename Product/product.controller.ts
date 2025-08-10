@@ -1,15 +1,10 @@
 import * as productQueries from './product.repository'
-import cloudinary from '../utils/cloudinary';
+import { uploadProductImage } from '../utils/uploadImage'
 import {Request, Response} from 'express'
 
 
 //create product with picture
-export async function uploadProductImage(file: Express.Multer.File){
-    const result =  await cloudinary.uploader.upload(file.path, {
-        Folder: 'ShopProducts' 
-    });
-    return result.secure_url;
-}
+
 export async function createProduct(req: Request, res: Response) {
     const {name , category, description, price, stock} = req.body 
     
