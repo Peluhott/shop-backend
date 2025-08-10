@@ -15,7 +15,12 @@ const prisma = new PrismaClient();
 async function main() {
     const hashedPassword = await bcrypt.hash('password',10)
 
-    await userQueries.insertUser('admin',hashedPassword)
+    const admin = await userQueries.insertUser('admin',hashedPassword)
+
+    await prisma.user.update({
+        where:{id:admin.id},
+        data: {is_admin: true}
+    })
     
 
     const testUser = await userQueries.insertUser("guest",hashedPassword);
