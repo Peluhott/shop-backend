@@ -7,12 +7,12 @@ import { validateRequest } from '../middleware/validateRequest';
 
 cartRouter.get('/', authenticateJWT, cartController.retrieveCartForUser)
 
-cartRouter.delete('/:productID/remove', authenticateJWT, removeItemValidation, validateRequest, cartController.removeItemFromCart)
+cartRouter.delete('/remove/:productID', authenticateJWT, removeItemValidation, validateRequest, cartController.removeItemFromCart)
 
-cartRouter.post('/:productID/add',authenticateJWT,addItemToCartValidation, validateRequest, cartController.addItemToCart)
+cartRouter.post('/add/:productID',authenticateJWT,addItemToCartValidation, validateRequest, cartController.addItemToCart)
 
-cartRouter.patch('/item/:productId/increase', authenticateJWT,changeQuantityValidation,validateRequest, cartController.increaseQuantityItemFromCart)
-cartRouter.patch('/item/:productId/decrease', authenticateJWT,changeQuantityValidation, validateRequest,cartController.decreaseQuantityItemFromCart)
+cartRouter.patch('/item/increase/:productId', authenticateJWT,changeQuantityValidation,validateRequest, cartController.increaseQuantityItemFromCart)
+cartRouter.patch('/item/decrease/:productId', authenticateJWT,changeQuantityValidation, validateRequest,cartController.decreaseQuantityItemFromCart)
 
 cartRouter.get('/subtotal',authenticateJWT,cartController.subtotalOfCart)
 
