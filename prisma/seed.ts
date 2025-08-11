@@ -32,6 +32,48 @@ async function main() {
 
         }
     })
+
+    const testCart = await prisma.cart.create({
+        data: {
+            user_id: testUser.id
+        }
+    })
+    const testProduct1 = await prisma.product.create({
+        data: { // id of 1 for test
+            name: 'shirt',
+            category: 'clothes',
+            picture: 'www.pictureurl.com', // fill this in with cloudinary picture url
+            description: ' a green shirt to wear',
+            price: 30,
+            stock: 4
+
+        }
+    })
+    const testProduct2 = await prisma.product.create({
+        data: { // id of 2 
+            name: 'pant',
+            category: 'clothes',
+            picture: 'www.pictureurl.com', // fill this in with cloudinary picture url
+            description: ' a green pair of pants to wear',
+            price: 20,
+            stock: 7
+
+        }
+    })
+    const testProduct3 = await prisma.product.create({
+        data: { // id of 3
+            name: 'tie',
+            category: 'clothes',
+            picture: 'www.pictureurl.com', // fill this in with cloudinary picture url
+            description: ' a green tie to wear',
+            price: 340,
+            stock: 40
+
+        }
+    })
+
+
+    
     
     
     
@@ -147,47 +189,7 @@ async function main() {
         
     }
     
-
-    const testCart = await prisma.cart.create({
-        data: {
-            user_id: testUser.id
-        }
-    })
-    const testProduct1 = await prisma.product.create({
-        data: {
-            name: 'shirt',
-            category: 'clothes',
-            picture: 'www.pictureurl.com', // fill this in with cloudinary picture url
-            description: ' a green shirt to wear',
-            price: 30,
-            stock: 4
-
-        }
-    })
-    const testProduct2 = await prisma.product.create({
-        data: {
-            name: 'pant',
-            category: 'clothes',
-            picture: 'www.pictureurl.com', // fill this in with cloudinary picture url
-            description: ' a green pair of pants to wear',
-            price: 20,
-            stock: 7
-
-        }
-    })
-    const testProduct3 = await prisma.product.create({
-        data: {
-            name: 'tie',
-            category: 'clothes',
-            picture: 'www.pictureurl.com', // fill this in with cloudinary picture url
-            description: ' a green tie to wear',
-            price: 340,
-            stock: 40
-
-        }
-    })
 }
-
     
 main()
   .then(() => {
