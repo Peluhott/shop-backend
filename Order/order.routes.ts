@@ -10,6 +10,6 @@ orderRouter.get('/user', authenticateJWT, orderController.retrieveOrders)
 orderRouter.get('/all',authenticateJWT, checkAdmin,orderController.retrieveAllOrders)
 orderRouter.get('/unfilled',authenticateJWT, checkAdmin, orderController.retrieveAllUnfilled)
 orderRouter.get('/filled',authenticateJWT, checkAdmin, orderController.retrieveFilled)
-orderRouter.patch('/mark',authenticateJWT, checkAdmin,markFilledOrUnfilledValidation, validateRequest,orderController.markFilledOrUnfilled)
+orderRouter.patch('/mark/:id',authenticateJWT, checkAdmin,markFilledOrUnfilledValidation, validateRequest,orderController.markFilledOrUnfilled)
 
 export default orderRouter;
