@@ -1,14 +1,29 @@
 import request from "supertest"
 import app from '../app'
 import prisma from "../shared/prisma"
+// create test for getting orders by user
+
+describe('GET /order/user', () => {
+    it('should return 200 status for order by a user', async () => {
+        const login = await request(app).post('/user/login')
+        .send({username:'guest', password:'password'})
+
+        const token = login.body.token
+
+        const res = await request(app).get('/order/user')
+        .set('Authorization', `Bearer ${token}`)
+
+        expect(res.status).toBe(200)
+    })
+})
 
 describe('GET /order/all', () => {
-    it('returns 401 if not authenticated', async () => {
+    it('should return 401 if not authenticated', async () => {
         const res = await request(app).get('/order/all')
         expect(res.status).toBe(401)
     })
 
-    it('returns status 403 because not admin', async () => {
+    it('should return status 403 because not admin', async () => {
         const login = await request(app).post('/user/login')
         .send({username: 'guest', password:'password'})
         
@@ -20,7 +35,7 @@ describe('GET /order/all', () => {
         expect(res.status).toBe(403);
     })
 
-    it('returns 200 for valid login and admin status', async () => {
+    it('should return 200 for valid login and admin status', async () => {
         const login = await request(app).post('/user/login')
         .send({username:'admin', password:'password'})
 
@@ -33,8 +48,8 @@ describe('GET /order/all', () => {
     })
 })
 
-describe('Get /order/unfilled', () => {
-    it('returns 200 for unfilled orders', async () => {
+describe('GET /order/unfilled', () => {
+    it('should return 200 for unfilled orders', async () => {
         const login = await request(app).post('/user/login')
         .send({username:'admin', password:'password'})
 
@@ -54,8 +69,13 @@ describe('Get /order/unfilled', () => {
     })
 })
 
-describe('Get /order/filled', () => {
-    it('returns 200 for filled orders', async () => {
+describe('GET /order/filled', () => {
+    it('should return 200 for filled orders', async () => {
+
+        await prisma.order.update({ // find a better way to do this
+            where: {id: 1},
+            data: {filled:true}
+        })
         const login = await request(app).post('/user/login')
         .send({username:'admin', password:'password'})
 
@@ -71,6 +91,34 @@ describe('Get /order/filled', () => {
             expect(res.body[0].filled).toBe(true)
         }
 
+        
+    })
+}) 
+
+describe('POST /order/markFilledOrUnfilled', () => {
+    it('should check whether a order is filled or unfilled and mark it the opposite', async () => {
+        const login = await request(app).post('/user/login')
+        .send({username:"admin", password:"password"})
+
+        const token = login.body.token
+
+        const order = await prisma.order.findFirst({
+            where:{id: 1}
+        })
+        const firstStatus = order?.filled
+
+        await request(app).patch('/order/mark/1')
+        .set('Authorization', `Bearer ${token}`)
+        .expect(204)
+
+        const orderAfter = await prisma.order.findFirst({
+            where:{id: 1}
+        })
+
+        const secondStatus = orderAfter?.filled
+
+        expect(firstStatus).toBe(!secondStatus)
+    
         
     })
 })
