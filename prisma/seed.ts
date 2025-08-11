@@ -24,6 +24,14 @@ async function main() {
     
 
     const testUser = await userQueries.insertUser("guest",hashedPassword);
+    await prisma.order.create({
+        data: {
+            user_id:2,
+            total: 200,
+            filled: false
+
+        }
+    })
     
     
     
