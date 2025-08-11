@@ -17,7 +17,7 @@ export const addItemToCartValidation = [
     .withMessage('quantity must be greater than 0'),
 
     body('unitPrice')
-    .isFloat({gt:0})
+    .isInt({gt:0})
     .withMessage('price must be greater than 0')
 ]
 
