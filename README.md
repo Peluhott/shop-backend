@@ -1,27 +1,70 @@
-Full Stack project for a shopping website
+Shop Backend API
 
--Backend will be built with nodejs and express
-*authentication with passportjs and jwt
-*postgresql for database
-*prisma to communicate with database
-*cloudinary to upload and view content
+-A backend RESTful API for an e-commerce platform, built as a learning project to practice core backend development skills.
+The API supports user and admin functionality, with authentication, database integration, and testing.
 
--Frontend for admin will be made in react
-*dashboard for analytics
-*page to view all orders filled/unfilled
-*page for crud operations on products
+Purpose
 
--frontend for user will also be made in react
-*homepage
-*products
-*about
-*create account and login
-*cart
-*place an order
+-This project was created to learn how to build and structure a RESTful API with:
+
+-User and admin role-based functionality
+
+-Secure authentication and authorization
+
+-Database persistence with a relational database
+
+-Unit and integration testing
+
+-API best practices
+
+Tech Stack
+
+-Node.js + Express.js
+
+-PostgreSQL with Prisma ORM
+
+-JWT for authentication
+
+-Jest for testing
+
+-Cloudinary for image storage
+
+Features Implemented
+
+-Authentication & Authorization
+
+-JWT-based authentication
+
+-Role-based access (admin vs. user)
+
+User Features
+
+-Create account, login
+
+-Browse products
+
+-Manage cart
+
+Admin Features
+
+-Add, edit, delete products
+
+-View all orders
+
+Testing
+
+-Partial integration tests
+
+Next Steps (Not Yet Implemented)
+
+-Complete full integration test coverage
+
+-Add more robust mock data for development/testing
+
+-Deploy the backend to a cloud host
+
+-Migrate database to an online instance
+
+-Expand API documentation for all endpoints
 
 
-tasks I need to go back and do 
-
-* finish making intergration and unit tests for complicated logic
-* add redis
-* 
