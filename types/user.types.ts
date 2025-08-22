@@ -7,6 +7,7 @@ export type UserInfoUpdate = {
     country?: string;
     age?: number;
     gender?: string;
-    email?: string; // optional since you're omitting it later
+    email?: string;
+    zipcode?: string; // optional since you're omitting it later
   };
   
