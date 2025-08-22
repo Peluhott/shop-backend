@@ -1,5 +1,6 @@
+
 import prisma from '../shared/prisma'
-                                                        // check to see if this is right
+
 export async function createOrder(user_id: number, items: {productId: number, qty: number, unitprice: number}[], orderTotal: number) {
     return await prisma.$transaction(async (tx)=> {
         
@@ -88,21 +89,45 @@ export async function getUnfilledOrders() {
     })
 }
 
-//export async function getOrderBetweenDates(params:type) {
-    // figure this out later
-//}
+export async function getOrderBetweenDates(start: Date, end: Date) {
+    return await prisma.order.findMany({
+        where: {
+            created_at: {
+                gte: start,
+                lte: end
+            }
+        }
+    })
+}
 
-//export async function getRecentOrders(params:type) {
-    //figure this out later
-//}
+export async function getRecentOrders(limit: number = 10) {
+    return await prisma.order.findMany({
+        orderBy: { created_at: 'desc' },
+        take: limit
+    })
+}
 
-//export async function getTopCustomersByOrder(params:type) {
-    //figure this out later
-//}
+export async function getTopCustomersByOrder(limit: number = 5) {
+    return await prisma.order.groupBy({
+        by: ['user_id'],
+        _count: { id: true },
+        orderBy: { _count: { id: 'desc' } },
+        take: limit
+    })
+}
 
-//export async function getOrderSummary(params:type) {
-    // gives you a report of total orders, cost, items bought etc
-//}
+export async function getOrderSummary() {
+    const totalOrders = await prisma.order.count()
+    const totalRevenue = await prisma.order.aggregate({
+        _sum: { total: true }
+    })
+    const totalItems = await prisma.ordered_Products.count()
+    return {
+        totalOrders,
+        totalRevenue: totalRevenue._sum.total ?? 0,
+        totalItems
+    }
+}
 
 // ordered products repo
 
@@ -118,10 +143,32 @@ export async function deleteOrderProductsByOrderId(id: number) {
     })
 }
 
-//export async function getTopSellingProducts(timePeriod: number, numberOfProducts: number) {
-    // figure this out later
-//}
+export async function getTopSellingProducts(timePeriodDays: number, numberOfProducts: number) {
+    const sinceDate = new Date()
+    sinceDate.setDate(sinceDate.getDate() - timePeriodDays)
+    return await prisma.ordered_Products.groupBy({
+        by: ['product_id'],
+        where: {
+            order: {
+                created_at: { gte: sinceDate }
+            }
+        },
+        _count: { id: true },
+        orderBy: { _count: { id: 'desc' } },
+        take: numberOfProducts
+    })
+}
 
-export async function getTotalSalesOfProduct(product_id: number, timePeriod: number){
-    
+export async function getTotalSalesOfProduct(product_id: number, timePeriodDays: number) {
+    const sinceDate = new Date()
+    sinceDate.setDate(sinceDate.getDate() - timePeriodDays)
+    const sales = await prisma.ordered_Products.count({
+        where: {
+            product_id,
+            order: {
+                created_at: { gte: sinceDate }
+            }
+        }
+    })
+    return sales
 }
