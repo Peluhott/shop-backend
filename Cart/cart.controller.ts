@@ -1,116 +1,94 @@
-import {Request , Response} from 'express'
-import * as cartQueries from './cart.repository'
-import { createOrder } from '../Order/order.repository'
-// check all status codes to make sure right one were used
-export async function retrieveCartForUser(req:Request, res: Response) {
-   try {
-    
-    const cart = await cartQueries.getCartByUser(req.user!.id)
-    if(!cart || !cart.id){
-        return res.status(404).json({message: ' cart not found for user'})
+import { Request, Response } from 'express'
+import * as cartService from './cart.service'
+
+export async function retrieveCartForUser(req: Request, res: Response) {
+    try {
+        const cartItems = await cartService.getCartForUser(req.user!.id)
+        if (!cartItems) {
+            return res.status(404).json({ message: 'cart not found for user' })
+        }
+        return res.status(200).json(cartItems)
+    } catch (error) {
+        return res.status(500).json({ message: 'did not retrieve cart' })
     }
-    const cartItems = await cartQueries.getCartItemsByCart(cart.id)
-    return res.status(200).json(cartItems)
-   } catch (error) {
-    return res.status(500).json({message: 'did not retrieve cart'})
-   }
 }
 
-
-export async function removeItemFromCart(req : Request, res: Response) {
-    try { // add validation
-       const productID = parseInt(req.params.id,10)
-       const cart = await cartQueries.getCartByUser(req.user!.id)
-       if(!cart){
-        return res.status(404).json({message:'cart could not be found'})
-       }
-        await cartQueries.deleteItemFromCart(cart.id, productID)
+export async function removeItemFromCart(req: Request, res: Response) {
+    try {
+        const productID = parseInt(req.params.id, 10)
+        const success = await cartService.removeItem(req.user!.id, productID)
+        if (!success) {
+            return res.status(404).json({ message: 'cart could not be found' })
+        }
         return res.status(204).send()
     } catch (error) {
-        res.status(500).json({message:'unable to delete item'})
+        res.status(500).json({ message: 'unable to delete item' })
     }
 }
 
-export async function addItemToCart(req : Request, res: Response) {
-   
-    try { // add validation later
-        const cart = await cartQueries.getCartByUser(req.user!.id)
-        if(!cart){
-            return res.status(404).json({message:'cart could not be found'})
-           }
-        const {productId, quantity = 1, unitPrice} = req.body
-        await cartQueries.addItemToCart(cart.id,productId,quantity,unitPrice)
+export async function addItemToCart(req: Request, res: Response) {
+    try {
+        const { productId, quantity = 1, unitPrice } = req.body
+        const success = await cartService.addItem(req.user!.id, productId, quantity, unitPrice)
+        if (!success) {
+            return res.status(404).json({ message: 'cart could not be found' })
+        }
         return res.status(201).send()
     } catch (error) {
-        res.status(500).json({message:'item insert failed'})
+        res.status(500).json({ message: 'item insert failed' })
     }
 }
 
-export async function increaseQuantityItemFromCart(req : Request, res: Response) {
-    try { // add validation
-        const cart = await cartQueries.getCartByUser(req.user!.id)
-        if(!cart){
-            return res.status(404).json({message:'cart could not be found'})
-           }
-        const productID = parseInt(req.params.id, 10);
-        const {quantity} = req.body
-        const cartItem = await cartQueries.getCartItemFromCart(cart.id, productID)
-        if(!cartItem){
-            return res.status(404).json({message:'cart item could not be found'})
-        }
-        await cartQueries.increaseCartItemStock(cartItem.id,quantity)
-        return res.status(204).send()
-    } catch (error) {
-        res.status(500).json({message:'increase failed'})
-    }
-}
-export async function decreaseQuantityItemFromCart(req : Request, res: Response) {
-    try { // add validation
-        const cart = await cartQueries.getCartByUser(req.user!.id)
-        if(!cart){
-            return res.status(404).json({message:'cart could not be found'})
-           }
-        const productID = parseInt(req.params.id, 10);
-        const {quantity} = req.body
-        const cartItem = await cartQueries.getCartItemFromCart(cart.id, productID)
-        if(!cartItem){
-            return res.status(404).json({message:'cart item could not be found'})
-        }
-        await cartQueries.decreaseCartItemStock(cartItem.id,quantity)
-        return res.status(204).send()
-    } catch (error) {
-        res.status(500).json({message:'decrease failed'})
-    }
-}
-export async function subtotalOfCart(req : Request, res: Response) {
-    try { // add validation
-        const cart = await cartQueries.getCartByUser(req.user!.id)
-        if(!cart){
-            return res.status(404).json({message:'cart could not be found'})
-           }
-        const subtotal = await cartQueries.getCartTotal(cart.id)
-        return res.status(200).json({subtotal})
-    } catch (error) {
-        return res.status(500).json({message:'could not calculate subtotal of cart'})
-    }
-}
-export async function placeOrderOfCart(req : Request, res: Response) {
-        const userId = req.user!.id
-    const {items, orderTotal} = req.body
-        if(!userId || !Array.isArray(items) || items.length ==0 || typeof orderTotal !== 'number') {
-            return res.status(400).json({message:'invalid input'})
-        }
+export async function increaseQuantityItemFromCart(req: Request, res: Response) {
     try {
-        await createOrder(userId, items, orderTotal)
-        return res.status(201).json({message:'order Created successfully'})
+        const productID = parseInt(req.params.id, 10)
+        const { quantity } = req.body
+        const success = await cartService.changeItemQuantity(req.user!.id, productID, quantity, true)
+        if (!success) {
+            return res.status(404).json({ message: 'cart or item could not be found' })
+        }
+        return res.status(204).send()
     } catch (error) {
-        return res.status(500).json({message:'order creation failed'})
+        res.status(500).json({ message: 'increase failed' })
     }
 }
-// remove items from cart
-// add items to cart
-//increase quantity
-//decrease quantity
 
-// subtotal of cart
-// placing the order
+export async function decreaseQuantityItemFromCart(req: Request, res: Response) {
+    try {
+        const productID = parseInt(req.params.id, 10)
+        const { quantity } = req.body
+        const success = await cartService.changeItemQuantity(req.user!.id, productID, quantity, false)
+        if (!success) {
+            return res.status(404).json({ message: 'cart or item could not be found' })
+        }
+        return res.status(204).send()
+    } catch (error) {
+        res.status(500).json({ message: 'decrease failed' })
+    }
+}
+
+export async function subtotalOfCart(req: Request, res: Response) {
+    try {
+        const subtotal = await cartService.getSubtotal(req.user!.id)
+        if (subtotal === null) {
+            return res.status(404).json({ message: 'cart could not be found' })
+        }
+        return res.status(200).json({ subtotal })
+    } catch (error) {
+        return res.status(500).json({ message: 'could not calculate subtotal of cart' })
+    }
+}
+
+export async function placeOrderOfCart(req: Request, res: Response) {
+    const userId = req.user!.id
+    const { items, orderTotal } = req.body
+    if (!userId || !Array.isArray(items) || items.length == 0 || typeof orderTotal !== 'number') {
+        return res.status(400).json({ message: 'invalid input' })
+    }
+    try {
+        await cartService.placeOrder(userId, items, orderTotal)
+        return res.status(201).json({ message: 'order Created successfully' })
+    } catch (error) {
+        return res.status(500).json({ message: 'order creation failed' })
+    }
+}
