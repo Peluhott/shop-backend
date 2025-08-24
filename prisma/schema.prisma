@@ -30,7 +30,7 @@ model user {
 model userInfo {
   id      Int     @id @default(autoincrement())
   userId  Int     @unique
-  email   String  @unique
+  email   String? @unique
   address String?
   city    String?
   state   String?
@@ -38,7 +38,7 @@ model userInfo {
   country String?
   age     Int?
   gender  String?
-  user    user    @relation(fields: [userId], references: [id])
+  user    user    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@map("userinfo")
 }
@@ -47,7 +47,7 @@ model cart {
   id         Int        @id @default(autoincrement())
   user_id    Int        @unique
   cart_items cartItem[]
-  user       user       @relation(fields: [user_id], references: [id])
+  user       user       @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@map("cart")
 }
@@ -58,7 +58,7 @@ model cartItem {
   product_id Int
   quantity   Int     @default(1)
   unitprice  Int
-  cart       cart    @relation(fields: [cart_id], references: [id])
+  cart       cart    @relation(fields: [cart_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   product    product @relation(fields: [product_id], references: [id])
 
   @@unique([cart_id, product_id]) // used to delete items
@@ -95,7 +95,7 @@ model product {
   category         String
   picture          String
   description      String
-  price            Int
+  price            Float              @db.DoublePrecision
   stock            Int
   ordered_products ordered_Products[]
   cart_item        cartItem[]
