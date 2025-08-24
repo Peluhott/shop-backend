@@ -1,7 +1,6 @@
-import OpenAI from "openai";
-const openai = new OpenAI();
 
-const tools = [
+
+export const tools = [
   {type: "function",
     name: "get_orders",
     description: "Retrieve orders, optionally filtered by status.",
@@ -37,6 +36,11 @@ const tools = [
     type: "function",
     name: "get_users",
     description: "gets list of users",
+    parameters: {
+      type: "object",
+      additionalProperties: false
+    }
+    
 
   }
 ]
