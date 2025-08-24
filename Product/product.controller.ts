@@ -12,7 +12,7 @@ export async function createProduct(req: Request, res: Response) {
 }
 
 export async function getProductById(req: Request, res: Response) {
-    const id = parseInt(req.params.id, 10)
+    const id = parseInt(req.params.productId, 10)
     try {
         const product = await productService.getProductById(id)
         return res.status(200).json(product)
@@ -34,7 +34,7 @@ export async function updateProductInfo(req: Request, res: Response) {
 }
 
 export async function deleteProduct(req: Request, res: Response) {
-    const id = parseInt(req.params.id, 10)
+    const id = parseInt(req.params.productId, 10)
     try {
         await productService.deleteProduct(id)
         return res.status(204).json({ message: 'product deleted' })
