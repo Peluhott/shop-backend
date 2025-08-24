@@ -1,34 +1,42 @@
-// ai/tools.ts
-import type { ChatCompletionTool } from "openai/resources/chat/completions";
+import OpenAI from "openai";
+const openai = new OpenAI();
 
-export const toolsCC: ChatCompletionTool[] = [
+const tools = [
+  {type: "function",
+    name: "get_orders",
+    description: "Retrieve orders, optionally filtered by status.",
+    parameters: {
+      type: "object",
+    properties: {
+      status: {
+        type: "string",
+        enum: ["all", "filled", "unfilled"],
+        description: "filter orders by status. Defaults to 'all'."
+      }
+    },
+    additionalProperties: false
+  }
+  }, 
   {
     type: "function",
-    function: {
-      name: "admin_query",
-      description: "Read-only admin queries over products, users, and orders.",
-      parameters: {
-        type: "object",
-        properties: {
-          target: {
-            type: "string",
-            enum: ["PRODUCTS", "TOP_SELLING", "USERS", "ORDERS"],
-            description: "Which dataset to fetch."
-          },
-          status: {
-            type: "string",
-            enum: ["ANY", "FILLED", "UNFILLED"],
-            description: "Order filter; only applies to ORDERS."
-          },
-          limit: {
-            type: "number",
-            minimum: 1,
-            maximum: 200,
-            description: "Max rows to return (default 50)."
-          }
-        },
-        required: ["target"]
+    name: "get_products",
+    description: "retrieves products",
+    parameters: {
+      type: "object",
+    properties: {
+      status: {
+        type: "string",
+        enum: ["top", "all"],
+        description: "have a choice of whether to get top selling products or all products, Defaults to all"
       }
-    }
+    },
+    additionalProperties: false
   }
-];
+},
+{
+    type: "function",
+    name: "get_users",
+    description: "gets list of users",
+
+  }
+]
