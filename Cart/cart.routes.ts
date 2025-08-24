@@ -16,6 +16,6 @@ cartRouter.patch('/item/decrease/:productId', authenticateJWT,changeQuantityVali
 
 cartRouter.get('/subtotal',authenticateJWT,cartController.subtotalOfCart)
 
-cartRouter.post('/placeorder',authenticateJWT, placeOrderValidation, validateRequest,cartController.placeOrderOfCart)
+cartRouter.post('/placeorder',authenticateJWT,validateRequest,cartController.placeOrderOfCart)
 
 export default cartRouter;
