@@ -8,14 +8,15 @@ import * as cartQueries from '../Cart/cart.repository'
 
 // learn to create seperate db one for testing and one for production 
 // add code to not run this seeder is the database is set to the production one
+// add better data later on
 
 
 const prisma = new PrismaClient();
 
 async function main() {
     const hashedPassword = await bcrypt.hash('password',10)
-
-    const admin = await userQueries.insertUser('admin',hashedPassword)
+    const adminEmail = 'admin@yahoo.com'
+    const admin = await userQueries.insertUser('admin',hashedPassword, adminEmail)
 
     await prisma.user.update({
         where:{id:admin.id},
@@ -23,7 +24,7 @@ async function main() {
     })
     
 
-    const testUser = await userQueries.insertUser("guest",hashedPassword);
+    const testUser = await userQueries.insertUser("guest",hashedPassword,'guest@yahoo.com');
     await prisma.order.create({
         data: {
             user_id:2,
@@ -84,7 +85,7 @@ async function main() {
             const category = faker.commerce.department();
             const picture = 'www.pictureurl.com'
             const description = faker.commerce.productDescription()
-            const price = faker.number.int({min:1,max:150})
+            const price = faker.number.float({min:1, max:500})
             const stock = faker.number.int({min:1,max:100})
         try {
             const product = await productQueries.createProduct(name, category, picture, description, price , stock)
@@ -100,8 +101,9 @@ async function main() {
     await Promise.all(
         Array.from({length:10}).map( async () => {
             const username = faker.internet.username()
+            const email = faker.internet.email()
             try {
-                const user = await userQueries.insertUser(username, "password")
+                const user = await userQueries.insertUser(username, "password",email)
             await prisma.cart.create({
                 data: {user_id: user.id}
             })
