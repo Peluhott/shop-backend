@@ -86,9 +86,86 @@ describe('POST /remove/:id' ,() => {
     })
 })
 
+describe('PATCH /item/increase/:productId', () => {
+    it('should increase the quantity of an item in the cart', async () => {
+        const login = await request(app).post('/user/login')
+            .send({ username: 'guest', password: 'password' })
+        const token = login.body.token
+        const productID = 1
+
+        // Add item first
+        await request(app).post('/cart/add')
+            .set('Authorization', `Bearer ${token}`)
+            .send({ productId: productID, unitPrice: 20 })
+
+        // Increase quantity
+        const res = await request(app).patch(`/cart/item/increase/${productID}`)
+            .set('Authorization', `Bearer ${token}`)
+            .send({ quantity: 2 })
+
+        expect(res.status).toBe(204)
+    })
+})
+
+describe('PATCH /item/decrease/:productId', () => {
+    it('should decrease the quantity of an item in the cart', async () => {
+        const login = await request(app).post('/user/login')
+            .send({ username: 'guest', password: 'password' })
+        const token = login.body.token
+        const productID = 1
+
+        // Add item first
+        await request(app).post('/cart/add')
+            .set('Authorization', `Bearer ${token}`)
+            .send({ productId: productID, unitPrice: 20 })
+
+        // Decrease quantity
+        const res = await request(app).patch(`/cart/item/decrease/${productID}`)
+            .set('Authorization', `Bearer ${token}`)
+            .send({ quantity: 1 })
+
+        expect(res.status).toBe(204)
+    })
+})
+
+describe('GET /cart/subtotal', () => {
+    it('should return the subtotal of the cart', async () => {
+        const login = await request(app).post('/user/login')
+            .send({ username: 'guest', password: 'password' })
+        const token = login.body.token
+
+        const res = await request(app).get('/cart/subtotal')
+            .set('Authorization', `Bearer ${token}`)
+
+        expect(res.status).toBe(200)
+        expect(res.body).toHaveProperty('subtotal')
+        expect(typeof res.body.subtotal).toBe('number')
+    })
+})
+
+describe('POST /cart/placeorder', () => {
+  it('should place an order from the cart', async () => {
+    const login = await request(app).post('/user/login')
+      .send({ username: 'guest', password: 'password' })
+    const token = login.body.token
+
+    // Add item first
+    await request(app).post('/cart/add')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ productId: 1, unitPrice: 20 })
+
+    // Place order (no body)
+    const res = await request(app).post('/cart/placeorder')
+      .set('Authorization', `Bearer ${token}`)
+
+    expect(res.status).toBe(201)
+    expect(res.body).toHaveProperty('message')
+  })
+})
+
+
 
 afterAll(async () => {
     await prisma.$disconnect();   
                  
   })
-  
