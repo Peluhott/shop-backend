@@ -42,6 +42,28 @@ export async function getSubtotal(userId: number) {
     return subtotal
 }
 
-export async function placeOrder(userId: number, items: any[], orderTotal: number) {
-    await createOrder(userId, items, orderTotal)
+export async function placeOrder(userId: number) {
+  const cart = await cartQueries.getCartByUser(userId)
+  if (!cart) return null
+
+  const cartItems = await cartQueries.getCartItemsByCart(cart.id)
+  if (!cartItems || cartItems.length === 0) return null
+
+  
+  const orderItems = cartItems.map(ci => ({
+    productId: ci.product_id,
+    qty: ci.quantity ?? 1,
+    unitprice: ci.unitprice,
+  }))
+
+  const orderTotal = orderItems.reduce((sum, it) => sum + it.unitprice * it.qty, 0)
+
+  const order = await createOrder(cart.user_id ?? userId, orderItems, orderTotal)
+
+  const productIdsOrdered = Array.from(new Set(orderItems.map(i => i.productId)))
+  for (const pid of productIdsOrdered) {
+    await cartQueries.deleteItemFromCart(cart.id, pid)
+  }
+
+  return order
 }
