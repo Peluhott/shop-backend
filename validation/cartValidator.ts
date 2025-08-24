@@ -22,7 +22,7 @@ export const addItemToCartValidation = [
 ]
 
 export const changeQuantityValidation = [
-    param('productID')
+    param('productId')
     .isInt({gt:0})
     .withMessage('product id must be postive'),
 
@@ -37,7 +37,7 @@ export const placeOrderValidation = [
     .isArray({min:1})
     .withMessage('array can not be empty'),
 
-    body('items.*.productID')
+    body('items.*.productId')
     .isInt({gt:0})
     .withMessage('product id must be positive'),
 
