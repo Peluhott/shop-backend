@@ -30,7 +30,7 @@ export const productInfoValidation = [
 ]
 
 export const retrieveProductValidator = [ // use this whenever i get product with id
-    param('id')
+    param('productId')
     .isInt({gt:0})
     .withMessage('id has to be a positive number')
 ]
