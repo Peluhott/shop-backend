@@ -1,4 +1,4 @@
-import prisma from '../shared/prisma'
+import prisma from "../shared/prisma"
 
 export async function createCartForUser(userid: number) {
     await prisma.cart.create({
@@ -52,18 +52,20 @@ export async function getCartItemFromCart(cartID: number, productId: number){
     })
 }
 
-export async function increaseCartItemStock(cartItem_id: number,change: number) {
-    await prisma.cartItem.update({
-        where:{id:cartItem_id},
-        data: {quantity:change}
-    })
+export async function increaseCartItemStock(cartItem_id: number, change: number) {
+  await prisma.cartItem.update({
+    where: { id: cartItem_id },
+    data: { quantity: { increment: change } }, 
+  });
 }
 
-export async function decreaseCartItemStock(cartItem_id: number, change: number){
-    await prisma.cartItem.update({
-        where:{id:cartItem_id},
-        data: {quantity:change}
-    })
+export async function decreaseCartItemStock(cartItem_id: number, change: number) {
+  
+  await prisma.cartItem.update({
+    where: { id: cartItem_id },
+    data: { quantity: { decrement: change } }, 
+  });
+ 
 }
 
 export async function getCartTotal(cartID: number) {
