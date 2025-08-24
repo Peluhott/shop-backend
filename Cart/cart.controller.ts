@@ -41,7 +41,7 @@ export async function addItemToCart(req: Request, res: Response) {
 
 export async function increaseQuantityItemFromCart(req: Request, res: Response) {
     try {
-        const productID = parseInt(req.params.id, 10)
+        const productID = parseInt(req.params.productId, 10)
         const { quantity } = req.body
         const success = await cartService.changeItemQuantity(req.user!.id, productID, quantity, true)
         if (!success) {
@@ -55,7 +55,7 @@ export async function increaseQuantityItemFromCart(req: Request, res: Response) 
 
 export async function decreaseQuantityItemFromCart(req: Request, res: Response) {
     try {
-        const productID = parseInt(req.params.id, 10)
+        const productID = parseInt(req.params.productId, 10)
         const { quantity } = req.body
         const success = await cartService.changeItemQuantity(req.user!.id, productID, quantity, false)
         if (!success) {
@@ -80,15 +80,15 @@ export async function subtotalOfCart(req: Request, res: Response) {
 }
 
 export async function placeOrderOfCart(req: Request, res: Response) {
+  try {
     const userId = req.user!.id
-    const { items, orderTotal } = req.body
-    if (!userId || !Array.isArray(items) || items.length == 0 || typeof orderTotal !== 'number') {
-        return res.status(400).json({ message: 'invalid input' })
-    }
-    try {
-        await cartService.placeOrder(userId, items, orderTotal)
-        return res.status(201).json({ message: 'order Created successfully' })
-    } catch (error) {
-        return res.status(500).json({ message: 'order creation failed' })
-    }
+    if (!userId) return res.status(401).json({ message: 'unauthorized' })
+
+    const order = await cartService.placeOrder(userId)
+    if (!order) return res.status(400).json({ message: 'cart is empty or not found' })
+
+    return res.status(201).json({ message: 'order Created successfully', orderId: order.id })
+  } catch (error) {
+    return res.status(500).json({ message: 'order creation failed' })
+  }
 }
