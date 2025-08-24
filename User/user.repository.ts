@@ -2,7 +2,7 @@ import prisma from '../shared/prisma'
 import { UserInfoUpdate } from '../types/user.types';
 
 // Transaction: create user and userInfo together
-export async function insertUser(username: string, password: string) {
+export async function insertUser(username: string, password: string, email: string) {
     return await prisma.$transaction(async (tx) => {
         const user = await tx.user.create({
             data: {
@@ -14,8 +14,11 @@ export async function insertUser(username: string, password: string) {
         await tx.userInfo.create({
             data: {
                 userId: user.id,
-                email: '', // Set default or require email in args
+                email: email
             }
+        });
+        await tx.cart.create({
+            data: { user_id: user.id }
         });
         return user;
     });
@@ -65,13 +68,13 @@ export async function getUserInfo(id: number) {
 
 export async function updateUserInfo(
     userid: number,
-    email: string,
-    data: Partial<Omit<UserInfoUpdate, 'email'>>
+    
+    data: Partial<Omit<UserInfoUpdate ,'userId'>>
 ) {
     return await prisma.userInfo.update({
         where: { userId: userid },
         data: {
-            email,
+            ...(data.email && { email: data.email }),
             ...(data.address && { address: data.address }),
             ...(data.city && { city: data.city }),
             ...(data.state && { state: data.state }),
@@ -81,4 +84,20 @@ export async function updateUserInfo(
             ...(data.gender && { gender: data.gender })
         }
     });
+}
+
+export async function createUserInfo(userId: number, data: Partial<UserInfoUpdate>) {
+    return await prisma.userInfo.create({
+        data: {
+            userId,
+            email: data.email ?? '',
+            address: data.address,
+            city: data.city,
+            state: data.state,
+            country: data.country,
+            zipcode: data.zipcode,
+            age: data.age,
+            gender: data.gender
+        }
+    })
 }
