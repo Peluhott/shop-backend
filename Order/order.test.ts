@@ -1,19 +1,58 @@
 import request from "supertest"
 import app from '../app'
 import prisma from "../shared/prisma"
-// create test for getting orders by user
+
+let adminToken: string
+let userToken: string
+let filledOrderId: number
+let unfilledOrderId: number
+
+beforeAll(async () => {
+    
+    const adminLogin = await request(app).post('/user/login')
+        .send({ username: 'admin', password: 'password' })
+    adminToken = adminLogin.body.token
+
+   
+    const userLogin = await request(app).post('/user/login')
+        .send({ username: 'guest', password: 'password' })
+    userToken = userLogin.body.token
+
+    
+    const filledOrder = await prisma.order.create({
+        data: {
+            user_id: 2, 
+            total: 100,
+            filled: true
+            
+        }
+    })
+    filledOrderId = filledOrder.id
+
+    
+    const unfilledOrder = await prisma.order.create({
+        data: {
+            user_id: 2, 
+            total: 50,
+            filled: false
+            
+        }
+    })
+    unfilledOrderId = unfilledOrder.id
+})
 
 describe('GET /order/user', () => {
-    it('should return 200 status for order by a user', async () => {
-        const login = await request(app).post('/user/login')
-        .send({username:'guest', password:'password'})
-
-        const token = login.body.token
-
+    it('should return 401 if not authenticated', async () => {
         const res = await request(app).get('/order/user')
-        .set('Authorization', `Bearer ${token}`)
+        expect(res.status).toBe(401)
+    })
 
+    it('should return 200 and user orders if authenticated', async () => {
+        const res = await request(app)
+            .get('/order/user')
+            .set('Authorization', `Bearer ${userToken}`)
         expect(res.status).toBe(200)
+        expect(Array.isArray(res.body)).toBe(true)
     })
 })
 
@@ -23,108 +62,108 @@ describe('GET /order/all', () => {
         expect(res.status).toBe(401)
     })
 
-    it('should return status 403 because not admin', async () => {
-        const login = await request(app).post('/user/login')
-        .send({username: 'guest', password:'password'})
-        
-        const token = login.body.token;
-
-        const res = await request(app).get('/order/all')
-        .set('Authorization', `Bearer ${token}`)
-
-        expect(res.status).toBe(403);
+    it('should return 403 if not admin', async () => {
+        const res = await request(app)
+            .get('/order/all')
+            .set('Authorization', `Bearer ${userToken}`)
+        expect(res.status).toBe(403)
     })
 
-    it('should return 200 for valid login and admin status', async () => {
-        const login = await request(app).post('/user/login')
-        .send({username:'admin', password:'password'})
-
-        const token = login.body.token
-
-        const res = await request(app).get('/order/all')
-        .set('Authorization', `Bearer ${token}`)
-
+    it('should return 200 and all orders if admin', async () => {
+        const res = await request(app)
+            .get('/order/all')
+            .set('Authorization', `Bearer ${adminToken}`)
         expect(res.status).toBe(200)
+        expect(Array.isArray(res.body)).toBe(true)
     })
 })
 
 describe('GET /order/unfilled', () => {
-    it('should return 200 for unfilled orders', async () => {
-        const login = await request(app).post('/user/login')
-        .send({username:'admin', password:'password'})
-
-        const token = login.body.token
-
+    it('should return 401 if not authenticated', async () => {
         const res = await request(app).get('/order/unfilled')
-        .set('Authorization', `Bearer ${token}`)
+        expect(res.status).toBe(401)
+    })
 
+    it('should return 403 if not admin', async () => {
+        const res = await request(app)
+            .get('/order/unfilled')
+            .set('Authorization', `Bearer ${userToken}`)
+        expect(res.status).toBe(403)
+    })
+
+    it('should return 200 and unfilled orders if admin', async () => {
+        const res = await request(app)
+            .get('/order/unfilled')
+            .set('Authorization', `Bearer ${adminToken}`)
         expect(res.status).toBe(200)
         expect(Array.isArray(res.body)).toBe(true)
-
-        if(res.body.length > 0){
-            expect(res.body[0].filled).toBe(false)
-        }
-
-        
     })
 })
 
 describe('GET /order/filled', () => {
-    it('should return 200 for filled orders', async () => {
-
-        await prisma.order.update({ // find a better way to do this
-            where: {id: 1},
-            data: {filled:true}
-        })
-        const login = await request(app).post('/user/login')
-        .send({username:'admin', password:'password'})
-
-        const token = login.body.token
-
+    it('should return 401 if not authenticated', async () => {
         const res = await request(app).get('/order/filled')
-        .set('Authorization', `Bearer ${token}`)
+        expect(res.status).toBe(401)
+    })
 
+    it('should return 403 if not admin', async () => {
+        const res = await request(app)
+            .get('/order/filled')
+            .set('Authorization', `Bearer ${userToken}`)
+        expect(res.status).toBe(403)
+    })
+
+    it('should return 200 and filled orders if admin', async () => {
+        const res = await request(app)
+            .get('/order/filled')
+            .set('Authorization', `Bearer ${adminToken}`)
         expect(res.status).toBe(200)
         expect(Array.isArray(res.body)).toBe(true)
-
-        if(res.body.length > 0){
-            expect(res.body[0].filled).toBe(true)
-        }
-
-        
     })
-}) 
+})
 
-describe('POST /order/markFilledOrUnfilled', () => {
-    it('should check whether a order is filled or unfilled and mark it the opposite', async () => {
-        const login = await request(app).post('/user/login')
-        .send({username:"admin", password:"password"})
+describe('POST /order/markFilledOrUnfilled/:id', () => {
+    it('should return 401 if not authenticated', async () => {
+        const res = await request(app).patch('/order/markFilledOrUnfilled/1')
+        expect(res.status).toBe(401)
+    })
 
-        const token = login.body.token
+    it('should return 403 if not admin', async () => {
+        const res = await request(app)
+            .patch('/order/markFilledOrUnfilled/1')
+            .set('Authorization', `Bearer ${userToken}`)
+        expect(res.status).toBe(403)
+    })
 
-        const order = await prisma.order.findFirst({
-            where:{id: 1}
-        })
-        const firstStatus = order?.filled
-
-        await request(app).patch('/order/mark/1')
-        .set('Authorization', `Bearer ${token}`)
-        .expect(204)
-
-        const orderAfter = await prisma.order.findFirst({
-            where:{id: 1}
-        })
-
-        const secondStatus = orderAfter?.filled
-
-        expect(firstStatus).toBe(!secondStatus)
-    
+    it('should return 204 if admin and order exists', async () => {
         
+        const res = await request(app)
+            .patch('/order/markFilledOrUnfilled/1')
+            .set('Authorization', `Bearer ${adminToken}`)
+        expect(res.status).toBe(204)
+    })
+
+    it('should mark an unfilled order as filled', async () => {
+        const res = await request(app)
+            .patch(`/order/markFilledOrUnfilled/${unfilledOrderId}`)
+            .set('Authorization', `Bearer ${adminToken}`)
+        expect(res.status).toBe(204)
+
+        const updated = await prisma.order.findUnique({ where: { id: unfilledOrderId } })
+        expect(updated!.filled).toBe(true)
+    })
+
+    it('should mark a filled order as unfilled', async () => {
+        const res = await request(app)
+            .patch(`/order/markFilledOrUnfilled/${filledOrderId}`)
+            .set('Authorization', `Bearer ${adminToken}`)
+        expect(res.status).toBe(204)
+
+        const updated = await prisma.order.findUnique({ where: { id: filledOrderId } })
+        expect(updated!.filled).toBe(false)
     })
 })
 
 afterAll(async () => {
-    await prisma.$disconnect();   
-                 
-  })
-  
+    await prisma.$disconnect()
+})
