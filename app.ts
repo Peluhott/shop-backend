@@ -6,7 +6,9 @@ import userRoutes from './User/user.routes'
 import cartRouter from './Cart/cart.routes'
 import orderRouter from './Order/order.routes'
 import productRouter from './Product/product.routes'
+import router from './ai/admin.chat'
 import cors from 'cors';
+
 
 dotenv.config();
 
@@ -25,6 +27,7 @@ app.use('/user', userRoutes);
 app.use('/cart', cartRouter)
 app.use('/order', orderRouter)
 app.use('/product', productRouter)
+app.use('ai', router)
 
 
 
