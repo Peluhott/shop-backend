@@ -31,6 +31,7 @@ export async function deleteProduct(id: number) {
 }
 
 export async function decreaseStock(id: number, change: number) {
+    
     return await prisma.product.update({
         where: { id },
         data: { stock: { decrement: change } }

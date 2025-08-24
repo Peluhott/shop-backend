@@ -11,7 +11,7 @@ productRouter.get('/top', authenticateJWT, checkAdmin, productController.getTopS
 productRouter.get('/search', productController.searchProduct)
 productRouter.post('/create',authenticateJWT,checkAdmin, productInfoValidation, validateRequest,productController.createProduct)
 productRouter.get('/id/:productId',retrieveProductValidator, validateRequest, productController.getProductById)
-productRouter.patch('/update',authenticateJWT,checkAdmin, productInfoValidation, validateRequest, productController.updateProductInfo)
+productRouter.patch('/update/:id',authenticateJWT,checkAdmin, productInfoValidation, validateRequest, productController.updateProductInfo)
 productRouter.delete('/remove/:productId',authenticateJWT,checkAdmin, retrieveProductValidator, validateRequest, productController.deleteProduct)
 // add pagination
 //reorder routes
