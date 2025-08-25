@@ -39,5 +39,7 @@
   },
   "scripts": {
     "test": "jest --verbose"
-  }
+  },
+   
+    "type": "module"
 }
