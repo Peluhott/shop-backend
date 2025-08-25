@@ -1,9 +1,9 @@
 import OpenAI from "openai";
 const openai = new OpenAI();
 
-// derive the create() arg type
+
 type CreateArgs = Parameters<typeof openai.responses.create>[0];
-// a single function tool item
+
 type FunctionToolItem = Extract<
   NonNullable<CreateArgs["tools"]>[number],
   { type: "function" }
@@ -24,7 +24,7 @@ const getOrdersTool = {
       }
     },
     additionalProperties: false,
-    required: ["status"] // <-- add this (or ['status'] if you want it required)
+    required: ["status"] 
   }
 } satisfies FunctionToolItem;
 
@@ -43,7 +43,7 @@ const getProductsTool = {
       }
     },
     additionalProperties: false,
-    required: ["status"] // <-- add this
+    required: ["status"] 
   }
 } satisfies FunctionToolItem;
 
@@ -60,7 +60,7 @@ const getUsersTool = {
   }
 } satisfies FunctionToolItem;
 
-// IMPORTANT: no `as const` on the ARRAY, keep it mutable
+
 export const toolsToUse: FunctionToolItem[] = [
   getOrdersTool,
   getProductsTool,

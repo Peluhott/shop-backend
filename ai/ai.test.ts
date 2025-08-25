@@ -41,9 +41,6 @@ describe('POST /ai/message (real route)', () => {
     console.log(res)
     expect(res.status).toBe(200)
     
-    // be permissive about response shape because model output is non-deterministic
     
-    // optionally log the body for debugging during development
-    // console.log(JSON.stringify(res.body, null, 2))
   })
 })
