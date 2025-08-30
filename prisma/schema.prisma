@@ -30,7 +30,7 @@ model user {
 model userInfo {
   id      Int     @id @default(autoincrement())
   userId  Int     @unique
-  email   String? @unique
+  email   String  @unique
   address String?
   city    String?
   state   String?
