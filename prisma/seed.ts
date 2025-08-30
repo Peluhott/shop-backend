@@ -299,15 +299,32 @@ await Promise.all(
   })
 )
 
-    
+    //locations 
+    const locations = [
+  { city: "Miami", state: "Florida", country: "United States", zip: "33101", address: "123 Ocean Dr" },
+  { city: "New York", state: "New York", country: "United States", zip: "10001", address: "456 Broadway Ave" },
+  { city: "Chicago", state: "Illinois", country: "United States", zip: "60601", address: "789 Michigan Ave" },
+  { city: "Los Angeles", state: "California", country: "United States", zip: "90001", address: "101 Hollywood Blvd" },
+  { city: "Seattle", state: "Washington", country: "United States", zip: "98101", address: "202 Pike St" },
+  { city: "Dallas", state: "Texas", country: "United States", zip: "75201", address: "303 Elm St" },
+  { city: "Denver", state: "Colorado", country: "United States", zip: "80201", address: "404 Colfax Ave" },
+  { city: "Boston", state: "Massachusetts", country: "United States", zip: "02101", address: "505 Beacon St" },
+  { city: "Atlanta", state: "Georgia", country: "United States", zip: "30301", address: "606 Peachtree St" },
+  { city: "Phoenix", state: "Arizona", country: "United States", zip: "85001", address: "707 Camelback Rd" },
+];
+
     
     
     await Promise.all(
         Array.from({length:10}).map( async () => {
             const username = faker.internet.username()
             const email = faker.internet.email()
+            const location = faker.helpers.arrayElement(locations);
+            const age = faker.number.int({min:18, max:65})
+            const gender =faker.person.sex()
             try {
-                const user = await userQueries.insertUser(username, hashedPassword,email)
+                const user = await userQueries.insertUser(username, hashedPassword,email, {address:location.address, city:location.city, state:location.state, zipcode:location.zip, country:location.country, age:age, gender:gender})
+                console.log("sucessfully added : " + user.username)
             // add user info for each
             }
              catch (error: any) {
