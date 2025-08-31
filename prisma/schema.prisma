@@ -78,13 +78,14 @@ model order {
 }
 
 model ordered_Products {
-  id         Int     @id @default(autoincrement())
+  id         Int      @id @default(autoincrement())
   order_id   Int
   product_id Int
+  created_at DateTime @default(now())
   // removed quantity going to used repeated rows so sql can do math
   unit_price Int // to know what the price was of product at time of sale incase it has changed
-  product    product @relation(fields: [product_id], references: [id])
-  order      order   @relation(fields: [order_id], references: [id]) // make sure to put logic to delete items if order is cancelled or deleted
+  product    product  @relation(fields: [product_id], references: [id])
+  order      order    @relation(fields: [order_id], references: [id]) // make sure to put logic to delete items if order is cancelled or deleted
 
   @@map("ordered_products")
 }
