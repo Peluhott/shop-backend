@@ -74,7 +74,7 @@ export async function searchProductsMatching(search: string) {
     })
 }
 
-export async function getTopSellingProducts(limit: number) {
+export async function getTopSellingProductsQuant(limit: number) {
     const topselling = await prisma.ordered_Products.groupBy({
         by: ['product_id'],
         _count: { product_id: true },
@@ -94,3 +94,66 @@ export async function getTopSellingProducts(limit: number) {
     return products
 }
 
+export async function getLowestSellingProductsQuant(limit: number) {
+    const topselling = await prisma.ordered_Products.groupBy({
+        by: ['product_id'],
+        _count: { product_id: true },
+        orderBy: { _count: { product_id: 'asc' } },
+        take: limit
+    })
+
+    const products = await Promise.all(topselling.map(async (entry) => {
+        const product = await prisma.product.findUnique({
+            where: { id: entry.product_id },
+        })
+        return {
+            ...product,
+            totalSold: entry._count.product_id
+        }
+    }))
+    return products
+}
+
+export async function getTopSellingProductsRevenue(limit: number) {
+  const grouped = await prisma.ordered_Products.groupBy({
+    by: ['product_id'],
+    _sum: { unit_price: true },        
+    orderBy: { _sum: { unit_price: 'desc' } },
+    take: limit,
+  });
+
+  const ids = grouped.map(g => g.product_id);
+  const products = await prisma.product.findMany({
+    where: { id: { in: ids } },
+    select: { id: true, name: true, price: true },
+  });
+
+  const byId = new Map(products.map(p => [p.id, p]));
+  return grouped.map(g => ({
+    ...byId.get(g.product_id),
+    totalRevenue: g._sum.unit_price ?? 0
+    
+  }));
+}
+
+export async function getLowestSellingProductsRevenue(limit: number) {
+  const grouped = await prisma.ordered_Products.groupBy({
+    by: ['product_id'],
+    _sum: { unit_price: true },        
+    orderBy: { _sum: { unit_price: 'asc' } },
+    take: limit,
+  });
+
+  const ids = grouped.map(g => g.product_id);
+  const products = await prisma.product.findMany({
+    where: { id: { in: ids } },
+    select: { id: true, name: true, price: true },
+  });
+
+  const byId = new Map(products.map(p => [p.id, p]));
+  return grouped.map(g => ({
+    ...byId.get(g.product_id),
+    totalRevenue: g._sum.unit_price ?? 0
+    
+  }));
+}

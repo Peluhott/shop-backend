@@ -116,18 +116,31 @@ export async function getTopCustomersByOrder(limit: number = 5) {
     })
 }
 
-export async function getOrderSummary() {
-    const totalOrders = await prisma.order.count()
-    const totalRevenue = await prisma.order.aggregate({
-        _sum: { total: true }
+export async function getTotalRevenueFromFilledOrders() {
+    const result = await prisma.ordered_Products.aggregate({
+        _sum: { unit_price: true },
+        where: {
+            order: {
+                filled: true
+            }
+        }
     })
-    const totalItems = await prisma.ordered_Products.count()
-    return {
-        totalOrders,
-        totalRevenue: totalRevenue._sum.total ?? 0,
-        totalItems
-    }
+    return result._sum.unit_price ?? 0
 }
+
+export async function getTotalRevenueFromUnfilledOrders() {
+    const result = await prisma.ordered_Products.aggregate({
+        _sum: { unit_price: true },
+        where: {
+            order: {
+                filled: false
+            }
+        }
+    })
+    return result._sum.unit_price ?? 0
+}
+
+
 
 // ordered products repo
 
@@ -171,4 +184,24 @@ export async function getTotalSalesOfProduct(product_id: number, timePeriodDays:
         }
     })
     return sales
+}
+
+export async function getTotalRevenueForPeriod(start?: Date, end?: Date) {
+    const where: any = {}
+    if (start && end) {
+        where.created_at = { gte: start, lte: end }
+    }
+    const result = await prisma.ordered_Products.aggregate({
+        _sum: { unit_price: true },
+        where
+    })
+    return result._sum.unit_price ?? 0
+}
+
+export async function getTotalQuantityForPeriod(start?: Date, end?: Date) {
+    const where: any = {}
+    if (start && end) {
+        where.created_at = { gte: start, lte: end }
+    }
+    return await prisma.ordered_Products.count({ where })
 }
