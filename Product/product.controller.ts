@@ -55,9 +55,10 @@ export async function returnAllProducts(req: Request, res: Response) {
 }
 
 export async function getProductsByFilter(req: Request, res: Response) {
-    const { filter, value } = req.body
+    
+    const { filter, value } = req.query
     try {
-        const products = await productService.getProductsByFilter(filter, value)
+        const products = await productService.getProductsByFilter(filter as string, value)
         return res.status(200).json(products)
     } catch (error) {
         console.log('failed to return products', error)
@@ -66,9 +67,10 @@ export async function getProductsByFilter(req: Request, res: Response) {
 }
 
 export async function searchProduct(req: Request, res: Response) {
-    const { search } = req.body
+    
+    const { search } = req.query
     try {
-        const products = await productService.searchProducts(search)
+        const products = await productService.searchProducts(search as string)
         return res.status(200).json(products)
     } catch (error) {
         console.log('unable to find products', error)

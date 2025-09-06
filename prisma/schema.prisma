@@ -57,7 +57,7 @@ model cartItem {
   cart_id    Int
   product_id Int
   quantity   Int     @default(1)
-  unitprice  Int
+  unitprice  Float   @db.DoublePrecision
   cart       cart    @relation(fields: [cart_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   product    product @relation(fields: [product_id], references: [id])
 
@@ -68,7 +68,7 @@ model cartItem {
 model order {
   id               Int                @id @default(autoincrement())
   user_id          Int
-  total            Int
+  total            Float              @db.DoublePrecision
   user             user               @relation(fields: [user_id], references: [id])
   created_at       DateTime           @default(now())
   filled           Boolean
@@ -83,7 +83,7 @@ model ordered_Products {
   product_id Int
   created_at DateTime @default(now())
   // removed quantity going to used repeated rows so sql can do math
-  unit_price Int // to know what the price was of product at time of sale incase it has changed
+  unit_price Float    @db.DoublePrecision // to know what the price was of product at time of sale incase it has changed
   product    product  @relation(fields: [product_id], references: [id])
   order      order    @relation(fields: [order_id], references: [id]) // make sure to put logic to delete items if order is cancelled or deleted
 
