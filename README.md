@@ -1,70 +1,92 @@
-Shop Backend API
+# Shop Platform – Full Stack E-Commerce Project
 
--A backend RESTful API for an e-commerce platform, built as a learning project to practice core backend development skills.
-The API supports user and admin functionality, with authentication, database integration, and testing.
+A modern, full-stack e-commerce platform built as a learning and portfolio project.  
+This repository contains the **backend RESTful API** (Node.js, TypeScript, PostgreSQL, Prisma), with plans for a React frontend for both users and admins.
 
-Purpose
+---
 
--This project was created to learn how to build and structure a RESTful API with:
+## Overview
 
--User and admin role-based functionality
+This project aims to deliver a robust, scalable, and secure shop platform with:
 
--Secure authentication and authorization
+- **Backend:** RESTful API using TypeScript, Node.js, Express, PostgreSQL, Prisma ORM, JWT authentication, and Cloudinary for image/content storage.
+- **Frontend:** React application (planned) with separate interfaces for users and admins.
 
--Database persistence with a relational database
+---
 
--Unit and integration testing
+## Features
 
--API best practices
+### User Features
 
-Tech Stack
+- Register and log in securely
+- Browse and search products
+- Add products to cart
+- Place orders
 
--Node.js + Express.js
+### Admin Features
 
--PostgreSQL with Prisma ORM
+- Admin dashboard (planned in React)
+- CRUD operations on products (add, edit, delete)
+- View, fill, and unfill orders
+- Access analytics (sales, revenue, user stats, etc.)
+- View all products, users, and orders
 
--JWT for authentication
+### Shared Features
 
--Jest for testing
+- JWT-based authentication and role-based authorization
+- Cloudinary integration for product images
+- Robust database schema with Prisma and PostgreSQL
+- Modular, scalable codebase with clear separation of concerns
+- Unit and integration testing with Jest
 
--Cloudinary for image storage
+---
 
-Features Implemented
+## Tech Stack
 
--Authentication & Authorization
+- **Backend:** Node.js, Express, TypeScript, PostgreSQL, Prisma ORM, JWT, Cloudinary, OpenAI
+- **Frontend:** React (planned)
+- **Testing:** Jest, Supertest
 
--JWT-based authentication
+---
 
--Role-based access (admin vs. user)
+## Setup
 
-User Features
+1. Clone the repo
+2. Install dependencies: `npm install`
+3. Set up the database: `npx prisma migrate dev`
+4. Seed the database (optional): `npx ts-node prisma/seed.ts`
+5. Start the server: `npx ts-node server.ts`
 
--Create account, login
+---
 
--Browse products
 
--Manage cart
 
-Admin Features
+## Environment Variables
 
--Add, edit, delete products
+Create a `.env` file in the project root with the following variables:
 
--View all orders
+```env
+devDATABASE_URL=postgresql://<user>:<password>@<host>:<port>/<database>
+JWT_SECRET=your_jwt_secret
+CLOUDINARY_NAME=your_cloudinary_cloud_name
+CLOUDINARY_APIKEY=your_cloudinary_api_key
+CLOUDINARY_SECRET=your_cloudinary_api_secret
+OPENAI_API_KEY=your_openai_api_key
+```
 
-Testing
+- Replace the values with your actual credentials.
+- `devDATABASE_URL` is your PostgreSQL connection string.
+- `JWT_SECRET` is any random string for JWT signing.
+- Cloudinary variables are for image upload support.
+- `OPENAI_API_KEY` is for OpenAI integration.
 
--Partial integration tests
+---
 
-Next Steps (Not Yet Implemented)
+## Next Steps
 
--Complete full integration test coverage
-
--Add more robust mock data for development/testing
-
--Deploy the backend to a cloud host
-
--Migrate database to an online instance
-
--Expand API documentation for all endpoints
+- Complete the AI analytics tooling (add more tools/endpoints for analytics and reporting)
+- Complete the React frontend
+- Enhance testing coverage and CI/CD integration
+- Deploy to a cloud provider (e.g., Heroku, AWS, etc.)
 
 
