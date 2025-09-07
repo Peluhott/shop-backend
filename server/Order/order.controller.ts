@@ -19,7 +19,9 @@ export async function retrieveOrders(req: Request, res: Response) {
 
 export async function retrieveAllOrders(req: Request, res: Response) {
     try {
-        const orders = await orderService.getAllOrders()
+        const page = req.query.page ? parseInt(req.query.page as string, 10) : undefined
+        const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : undefined
+        const orders = await orderService.getAllOrders(page, limit)
         if (!orders || orders.length === 0) {
             return res.status(404).json({ message: 'no orders found' })
         }
@@ -32,7 +34,9 @@ export async function retrieveAllOrders(req: Request, res: Response) {
 
 export async function retrieveAllUnfilled(req: Request, res: Response) {
     try {
-        const orders = await orderService.getUnfilledOrders()
+        const page = req.query.page ? parseInt(req.query.page as string, 10) : undefined
+        const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : undefined
+        const orders = await orderService.getUnfilledOrders(page, limit)
         if (!orders || orders.length === 0) {
             return res.status(404).json({ message: 'no orders found' })
         }
@@ -45,7 +49,9 @@ export async function retrieveAllUnfilled(req: Request, res: Response) {
 
 export async function retrieveFilled(req: Request, res: Response) {
     try {
-        const orders = await orderService.getFilledOrders()
+        const page = req.query.page ? parseInt(req.query.page as string, 10) : undefined
+        const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : undefined
+        const orders = await orderService.getFilledOrders(page, limit)
         if (!orders || orders.length === 0) {
             return res.status(404).json({ message: 'no orders found' })
         }

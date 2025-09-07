@@ -44,9 +44,13 @@ export async function deleteProduct(req: Request, res: Response) {
     }
 }
 
+// Updated to support pagination via query params
 export async function returnAllProducts(req: Request, res: Response) {
     try {
-        const products = await productService.getAllProducts()
+        const page = req.query.page ? parseInt(req.query.page as string, 10) : undefined
+        const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : undefined
+
+        const products = await productService.getAllProducts(page, limit)
         return res.status(200).json(products)
     } catch (error) {
         console.log('failed to retrieve products', error)
@@ -55,7 +59,6 @@ export async function returnAllProducts(req: Request, res: Response) {
 }
 
 export async function getProductsByFilter(req: Request, res: Response) {
-    
     const { filter, value } = req.query
     try {
         const products = await productService.getProductsByFilter(filter as string, value)
@@ -67,7 +70,6 @@ export async function getProductsByFilter(req: Request, res: Response) {
 }
 
 export async function searchProduct(req: Request, res: Response) {
-    
     const { search } = req.query
     try {
         const products = await productService.searchProducts(search as string)

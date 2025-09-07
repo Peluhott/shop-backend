@@ -39,16 +39,19 @@ export async function upsertUserInfoService(userId: number, info: Partial<Omit<U
         // Update existing info
         return await userQueries.updateUserInfo(
             userId,
-            
-            info
+            info as UserInfoUpdate
         )
     } else {
-        // Create new info
-        return await userQueries.createUserInfo(userId, info)
+        // If no info exists, update is not possible, so just return null or throw
+        throw new Error('User info does not exist. User info is created during user registration.')
     }
 }
 
 export async function userInfoExistsService(userId: number) {
     const info = await userQueries.getUserInfo(userId)
     return !!info
+}
+
+export async function getAllUsersService(page?: number, limit?: number) {
+    return await userQueries.getAllUsers(page, limit)
 }

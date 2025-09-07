@@ -1,4 +1,3 @@
-
 import prisma from '../utils/prisma'
 
 export async function createOrder(user_id: number, items: {productId: number, qty: number, unitprice: number}[], orderTotal: number) {
@@ -40,7 +39,14 @@ export async function getOrderById(id: number) {
     })
 }
 
-export async function getAllOrders() {
+export async function getAllOrders(page?: number, limit?: number) {
+    if (page && limit) {
+        const skip = (page - 1) * limit
+        return await prisma.order.findMany({
+            skip,
+            take: limit
+        })
+    }
     return await prisma.order.findMany()
 }
 
@@ -77,26 +83,51 @@ export async function markOrderUnfilled(id: number) {
     })
 }
 
-export async function getFilledOrders() {
+export async function getFilledOrders(page?: number, limit?: number) {
+    if (page && limit) {
+        const skip = (page - 1) * limit
+        return await prisma.order.findMany({
+            where: { filled: true },
+            skip,
+            take: limit
+        })
+    }
     return await prisma.order.findMany({
-        where: {filled: true}
+        where: { filled: true }
     })
 }
 
-export async function getUnfilledOrders() {
+export async function getUnfilledOrders(page?: number, limit?: number) {
+    if (page && limit) {
+        const skip = (page - 1) * limit
+        return await prisma.order.findMany({
+            where: { filled: false },
+            skip,
+            take: limit
+        })
+    }
     return await prisma.order.findMany({
-        where: {filled: false}
+        where: { filled: false }
     })
 }
 
-export async function getOrderBetweenDates(start: Date, end: Date) {
-    return await prisma.order.findMany({
-        where: {
-            created_at: {
-                gte: start,
-                lte: end
-            }
+export async function getOrderBetweenDates(start: Date, end: Date, page?: number, limit?: number) {
+    const where = {
+        created_at: {
+            gte: start,
+            lte: end
         }
+    }
+    if (page && limit) {
+        const skip = (page - 1) * limit
+        return await prisma.order.findMany({
+            where,
+            skip,
+            take: limit
+        })
+    }
+    return await prisma.order.findMany({
+        where
     })
 }
 
