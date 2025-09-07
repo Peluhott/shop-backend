@@ -1,5 +1,5 @@
-import { Prisma } from '@prisma/client'
-import prisma from '../shared/prisma'
+
+import prisma from '../utils/prisma'
 
 export async function createProduct(name: string, category: string, picture: string, description: string, price: number, stock: number) {
     return await prisma.product.create({
@@ -56,10 +56,10 @@ export async function isProductInStock(id: number) {
  * Filter products by a specific field and value.
  * Example: getProductByFilter('category', 'shirts')
  */
-export async function getProductByFilter<k extends keyof Prisma.productWhereInput>(filter: k, value: Prisma.productWhereInput[k]) {
-    return await prisma.product.findMany({
-        where: { [filter]: value }
-    })
+export async function getProductByFilter(filter: string, value: any) {
+  return await prisma.product.findMany({
+    where: { [filter]: value }
+  })
 }
 
 export async function searchProductsMatching(search: string) {
@@ -74,6 +74,9 @@ export async function searchProductsMatching(search: string) {
     })
 }
 
+
+
+//------------------------------analytic functions for products start here------------------------------
 export async function getTopSellingProductsQuant(limit: number) {
     const topselling = await prisma.ordered_Products.groupBy({
         by: ['product_id'],
@@ -130,7 +133,7 @@ export async function getTopSellingProductsRevenue(limit: number) {
 
   const byId = new Map(products.map(p => [p.id, p]));
   return grouped.map(g => ({
-    ...byId.get(g.product_id),
+    ...(byId.get(g.product_id) ?? {}),
     totalRevenue: g._sum.unit_price ?? 0
     
   }));
@@ -152,7 +155,7 @@ export async function getLowestSellingProductsRevenue(limit: number) {
 
   const byId = new Map(products.map(p => [p.id, p]));
   return grouped.map(g => ({
-    ...byId.get(g.product_id),
+    ...(byId.get(g.product_id) ?? {}), // incase the product is not found, default to an empty object
     totalRevenue: g._sum.unit_price ?? 0
     
   }));

@@ -1,4 +1,4 @@
-import { JwtPayload } from "../auth";
+import { JwtPayload } from "../../auth/auth";
 
 
 declare global {

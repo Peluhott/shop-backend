@@ -1,4 +1,4 @@
-import prisma from "../shared/prisma"
+import prisma from "../utils/prisma"
 
 export async function createCartForUser(userid: number) {
     await prisma.cart.create({

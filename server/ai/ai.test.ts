@@ -1,6 +1,6 @@
 import request from 'supertest'
 import app from '../app'
-import prisma from '../shared/prisma'
+import prisma from '../utils/prisma'
 
 let adminToken: string
 let userToken: string

@@ -1,5 +1,5 @@
 
-import prisma from '../shared/prisma'
+import prisma from '../utils/prisma'
 
 export async function createOrder(user_id: number, items: {productId: number, qty: number, unitprice: number}[], orderTotal: number) {
     return await prisma.$transaction(async (tx)=> {
@@ -107,6 +107,27 @@ export async function getRecentOrders(limit: number = 10) {
     })
 }
 
+
+
+
+
+// ordered products repo
+
+export async function getOrderedProductsByOrderId(id: number) {
+    return await prisma.ordered_Products.findMany({
+        where: {order_id: id}
+    })
+}
+
+export async function deleteOrderProductsByOrderId(id: number) {
+    await prisma.ordered_Products.deleteMany({
+        where: {order_id: id}
+    })
+}
+
+
+
+//------------------------------analytic functions for orders and ordered products start here------------------------------
 export async function getTopCustomersByOrder(limit: number = 5) {
     return await prisma.order.groupBy({
         by: ['user_id'],
@@ -138,22 +159,6 @@ export async function getTotalRevenueFromUnfilledOrders() {
         }
     })
     return result._sum.unit_price ?? 0
-}
-
-
-
-// ordered products repo
-
-export async function getOrderedProductsByOrderId(id: number) {
-    return await prisma.ordered_Products.findMany({
-        where: {order_id: id}
-    })
-}
-
-export async function deleteOrderProductsByOrderId(id: number) {
-    await prisma.ordered_Products.deleteMany({
-        where: {order_id: id}
-    })
 }
 
 export async function getTopSellingProducts(timePeriodDays: number, numberOfProducts: number) {

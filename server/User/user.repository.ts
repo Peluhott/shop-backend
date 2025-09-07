@@ -1,4 +1,4 @@
-import prisma from '../shared/prisma'
+import prisma from '../utils/prisma'
 import { UserInfoUpdate } from '../types/user.types';
 
 

@@ -22,7 +22,7 @@ export async function executeFunction(functionTool: string, statuses: string){
 
         case 'get_products': {
             if(statuses === 'top'){
-                return productQueries.getTopSellingProducts(5)
+                return productQueries.getTopSellingProductsQuant(5)
             }   
             else {
                 return productQueries.getAllProducts()
