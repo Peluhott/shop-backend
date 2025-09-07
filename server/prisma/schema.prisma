@@ -1,0 +1,105 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("devDATABASE_URL")
+}
+
+// figure out what i need to index to make this db faster
+model user {
+  id       Int    @id @default(autoincrement())
+  username String @unique
+  password String
+
+  is_admin Boolean
+  orders   order[]
+  cart     cart?
+  userinfo userInfo?
+
+  @@map("users") //changed it to users to avoid conflit
+}
+
+model userInfo {
+  id      Int     @id @default(autoincrement())
+  userId  Int     @unique
+  email   String  @unique
+  address String?
+  city    String?
+  state   String?
+  zipcode String?
+  country String?
+  age     Int?
+  gender  String?
+  user    user    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("userinfo")
+}
+
+model cart {
+  id         Int        @id @default(autoincrement())
+  user_id    Int        @unique
+  cart_items cartItem[]
+  user       user       @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("cart")
+}
+
+model cartItem {
+  id         Int     @id @default(autoincrement())
+  cart_id    Int
+  product_id Int
+  quantity   Int     @default(1)
+  unitprice  Float   @db.DoublePrecision
+  cart       cart    @relation(fields: [cart_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  product    product @relation(fields: [product_id], references: [id])
+
+  @@unique([cart_id, product_id]) // used to delete items
+  @@map("cartitem")
+}
+
+model order {
+  id               Int                @id @default(autoincrement())
+  user_id          Int
+  total            Float              @db.DoublePrecision
+  user             user               @relation(fields: [user_id], references: [id])
+  created_at       DateTime           @default(now())
+  filled           Boolean
+  ordered_products ordered_Products[]
+
+  @@map("orders")
+}
+
+model ordered_Products {
+  id         Int      @id @default(autoincrement())
+  order_id   Int
+  product_id Int
+  created_at DateTime @default(now())
+  // removed quantity going to used repeated rows so sql can do math
+  unit_price Float    @db.DoublePrecision // to know what the price was of product at time of sale incase it has changed
+  product    product  @relation(fields: [product_id], references: [id])
+  order      order    @relation(fields: [order_id], references: [id]) // make sure to put logic to delete items if order is cancelled or deleted
+
+  @@map("ordered_products")
+}
+
+model product {
+  id               Int                @id @default(autoincrement())
+  name             String
+  category         String
+  picture          String
+  description      String
+  price            Float              @db.DoublePrecision
+  stock            Int
+  ordered_products ordered_Products[]
+  cart_item        cartItem[]
+
+  @@map("product")
+}

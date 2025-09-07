@@ -1,0 +1,77 @@
+import * as orderService from './order.service'
+import { Request, Response } from 'express'
+
+export async function retrieveOrders(req: Request, res: Response) {
+    if (!req.user || !req.user.id) {
+        return res.status(401).json({ message: 'unauthorized user' })
+    }
+    try {
+        const orders = await orderService.getOrdersByUserId(req.user.id)
+        if (!orders || orders.length === 0) {
+            return res.status(404).json({ message: 'no orders found for user' })
+        }
+        return res.status(200).json(orders)
+    } catch (error) {
+        console.log('error retrieving for user', error)
+        return res.status(500).json({ message: 'failed to retrieve orders' })
+    }
+}
+
+export async function retrieveAllOrders(req: Request, res: Response) {
+    try {
+        const orders = await orderService.getAllOrders()
+        if (!orders || orders.length === 0) {
+            return res.status(404).json({ message: 'no orders found' })
+        }
+        return res.status(200).json(orders)
+    } catch (error) {
+        console.log('error retrieving all orders', error)
+        return res.status(500).json({ message: 'unable to return orders' })
+    }
+}
+
+export async function retrieveAllUnfilled(req: Request, res: Response) {
+    try {
+        const orders = await orderService.getUnfilledOrders()
+        if (!orders || orders.length === 0) {
+            return res.status(404).json({ message: 'no orders found' })
+        }
+        return res.status(200).json(orders)
+    } catch (error) {
+        console.log("error retrieving unfilled", error)
+        return res.status(500).json({ message: 'error retrieving unfilled' })
+    }
+}
+
+export async function retrieveFilled(req: Request, res: Response) {
+    try {
+        const orders = await orderService.getFilledOrders()
+        if (!orders || orders.length === 0) {
+            return res.status(404).json({ message: 'no orders found' })
+        }
+        return res.status(200).json(orders)
+    } catch (error) {
+        console.log("error retrieving filled orders")
+        return res.status(500).json({ message: 'error retrieving filled' })
+    }
+}
+
+export async function markFilledOrUnfilled(req: Request, res: Response) {
+    if (!req.params.id) {
+        return res.status(400).json({ message: 'invalid input' })
+    }
+    const id = parseInt(req.params.id, 10)
+    try {
+        const result = await orderService.toggleOrderFilledStatus(id)
+        if (!result) {
+            return res.status(404).json({ message: 'order not found' })
+        }
+        return res.status(204).send()
+    } catch (error) {
+        console.log('error marking order', error)
+        return res.status(500).json({ message: 'order marking failed' })
+    }
+}
+
+
+
