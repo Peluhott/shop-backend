@@ -84,7 +84,7 @@ OPENAI_API_KEY=your_openai_api_key
 
 ## Documentation
 
-_Comprehensive API and usage documentation coming soon._
+
 
 ---
 
