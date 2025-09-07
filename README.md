@@ -82,6 +82,89 @@ OPENAI_API_KEY=your_openai_api_key
 
 ---
 
+## Documentation
+
+_Comprehensive API and usage documentation coming soon._
+
+---
+
+## Cart API Routes
+
+| Method | Endpoint                        | Description                                 | Auth Required | Body/Params                       |
+|--------|---------------------------------|---------------------------------------------|--------------|-----------------------------------|
+| GET    | `/cart/`                        | Retrieve the current user's cart            | Yes          | -                                 |
+| DELETE | `/cart/remove/:id`              | Remove an item from the cart by item ID     | Yes          | URL param: `id`                   |
+| POST   | `/cart/add`                     | Add an item to the cart                     | Yes          | `{ productId, quantity }`         |
+| PATCH  | `/cart/item/increase/:productId`| Increase quantity of a cart item            | Yes          | URL param: `productId`            |
+| PATCH  | `/cart/item/decrease/:productId`| Decrease quantity of a cart item            | Yes          | URL param: `productId`            |
+| GET    | `/cart/subtotal`                | Get the subtotal of the current cart        | Yes          | -                                 |
+| POST   | `/cart/placeorder`              | Place an order with the current cart        | Yes          | (Cart must have items)            |
+
+**Notes:**
+- All routes require JWT authentication.
+- Validation is applied to all modifying routes.
+- `add`, `increase`, and `decrease` expect appropriate validation for product and quantity.
+
+---
+
+## Order API Routes
+
+| Method | Endpoint                                 | Description                                  | Auth Required | Body/Params                       |
+|--------|------------------------------------------|----------------------------------------------|--------------|-----------------------------------|
+| GET    | `/order/user`                            | Get all orders for the current user          | Yes          | -                                 |
+| GET    | `/order/all`                             | Get all orders (admin only)                  | Admin        | -                                 |
+| GET    | `/order/filled`                          | Get all filled orders (admin only)           | Admin        | -                                 |
+| GET    | `/order/unfilled`                        | Get all unfilled orders (admin only)         | Admin        | -                                 |
+| POST   | `/order/markFilledOrUnfilled/:id`        | Toggle filled/unfilled status for an order   | Admin        | URL param: `id`                   |
+| PATCH  | `/order/mark/:id`                        | Toggle filled/unfilled status for an order   | Admin        | URL param: `id`                   |
+| GET    | `/order/:id`                             | Get a specific order by ID                   | Yes          | URL param: `id`                   |
+
+**Notes:**
+- All routes require JWT authentication.
+- Admin-only routes require the user to have admin privileges.
+- Marking/toggling endpoints change the filled status of an order.
+
+---
+
+## Product API Routes
+
+| Method | Endpoint                          | Description                                 | Auth Required | Body/Params                       |
+|--------|-----------------------------------|---------------------------------------------|--------------|-----------------------------------|
+| GET    | `/product/all`                    | Get all products                            | No           | -                                 |
+| GET    | `/product/:id`                    | Get a product by ID                         | No           | URL param: `id`                   |
+| POST   | `/product/create`                 | Create a new product                        | Admin        | Product fields + image file       |
+| PATCH  | `/product/update/:id`             | Update a product by ID                      | Admin        | URL param: `id`, product fields   |
+| DELETE | `/product/delete/:id`             | Delete a product by ID                      | Admin        | URL param: `id`                   |
+| POST   | `/product/filter`                 | Filter products by category or other fields | No           | `{ filter, value }`               |
+| POST   | `/product/search`                 | Search products by name or keyword          | No           | `{ search }`                      |
+| GET    | `/product/top`                    | Get top selling products                    | No           | Query param: `limit` (optional)   |
+
+**Notes:**
+- Admin routes require JWT authentication and admin privileges.
+- Product creation and update support image upload via Cloudinary.
+- Filtering and search endpoints accept JSON bodies for flexible queries.
+
+---
+
+## User API Routes
+
+| Method | Endpoint              | Description                              | Auth Required | Body/Params                         |
+|--------|----------------------|------------------------------------------|--------------|-------------------------------------|
+| POST   | `/user/login`        | Log in and receive a JWT                 | No           | `{ username, password }`            |
+| POST   | `/user/create`       | Register a new user                      | No           | `{ name, username, password }`      |
+| GET    | `/user/info`         | Get info for the authenticated user      | Yes          | -                                   |
+| POST   | `/user/info/upsert`  | Add or update user info                  | Yes          | User info fields                    |
+| GET    | `/user/info/exists`  | Check if user info exists                | Yes          | -                                   |
+| GET    | `/user/all`          | Get all users (admin only)               | Admin        | -                                   |
+| GET    | `/user/:id`          | Get a user by ID (admin only)            | Admin        | URL param: `id`                     |
+
+**Notes:**
+- JWT authentication required for all routes except login and create.
+- Admin-only routes require the user to have admin privileges.
+- User info endpoints allow users to manage their profile details.
+
+---
+
 ## Next Steps
 
 - Complete the AI analytics tooling (add more tools/endpoints for analytics and reporting)
