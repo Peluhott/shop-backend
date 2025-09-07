@@ -1,4 +1,3 @@
-
 import prisma from '../utils/prisma'
 
 export async function createProduct(name: string, category: string, picture: string, description: string, price: number, stock: number) {
@@ -13,7 +12,15 @@ export async function getProductById(id: number) {
     })
 }
 
-export async function getAllProducts() {
+export async function getAllProducts(page?: number, limit?: number) {
+    if (page && limit) {
+        const skip = (page - 1) * limit
+        return await prisma.product.findMany({
+            skip,
+            take: limit
+        })
+    }
+    // If no pagination, return all products
     return await prisma.product.findMany()
 }
 

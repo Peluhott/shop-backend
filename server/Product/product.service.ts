@@ -23,8 +23,9 @@ export async function deleteProduct(id: number) {
     return await productQueries.deleteProduct(id)
 }
 
-export async function getAllProducts() {
-    return await productQueries.getAllProducts()
+// Updated to accept pagination params
+export async function getAllProducts(page?: number, limit?: number) {
+    return await productQueries.getAllProducts(page, limit)
 }
 
 export async function getProductsByFilter(filter: string, value: any) {
@@ -36,5 +37,5 @@ export async function searchProducts(search: string) {
 }
 
 export async function getTopSellingProducts(limit: number) {
-    return await productQueries.getTopSellingProducts(limit)
+    return await productQueries.getTopSellingProductsQuant(limit)
 }

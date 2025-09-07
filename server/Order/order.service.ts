@@ -4,16 +4,20 @@ export async function getOrdersByUserId(userId: number) {
     return await orderQueries.getOrdersByUserId(userId)
 }
 
-export async function getAllOrders() {
-    return await orderQueries.getAllOrders()
+export async function getAllOrders(page?: number, limit?: number) {
+    return await orderQueries.getAllOrders(page, limit)
 }
 
-export async function getUnfilledOrders() {
-    return await orderQueries.getUnfilledOrders()
+export async function getUnfilledOrders(page?: number, limit?: number) {
+    return await orderQueries.getUnfilledOrders(page, limit)
 }
 
-export async function getFilledOrders() {
-    return await orderQueries.getFilledOrders()
+export async function getFilledOrders(page?: number, limit?: number) {
+    return await orderQueries.getFilledOrders(page, limit)
+}
+
+export async function getOrderBetweenDates(start: Date, end: Date, page?: number, limit?: number) {
+    return await orderQueries.getOrderBetweenDates(start, end, page, limit)
 }
 
 export async function toggleOrderFilledStatus(id: number) {

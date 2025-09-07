@@ -73,4 +73,16 @@ export async function userInfoExists(req: Request, res: Response) {
     }
 }
 
+export async function getAllUsers(req: Request, res: Response) {
+    try {
+        const page = req.query.page ? parseInt(req.query.page as string, 10) : undefined
+        const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : undefined
+        const users = await userService.getAllUsersService(page, limit)
+        return res.status(200).json(users)
+    } catch (error) {
+        console.error('Error retrieving users:', error)
+        return res.status(500).json({ message: 'Failed to retrieve users' })
+    }
+}
+
 

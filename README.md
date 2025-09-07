@@ -165,6 +165,26 @@ OPENAI_API_KEY=your_openai_api_key
 
 ---
 
+## Pagination
+
+The following endpoints support **optional pagination** using the `?page` and `?limit` query parameters:
+
+- `/product/all`
+- `/order/all`
+- `/order/filled`
+- `/order/unfilled`
+- `/user/all`
+
+**Usage Example:**
+```
+/product/all?page=2&limit=10
+```
+This returns page 2 with 10 items per page.
+
+If `page` and `limit` are omitted, all results are returned.
+
+---
+
 ## Next Steps
 
 - Complete the AI analytics tooling (add more tools/endpoints for analytics and reporting)

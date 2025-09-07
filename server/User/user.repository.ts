@@ -62,8 +62,15 @@ export async function isUsernameTaken(username: string) {
     return !!user;
 }
 
-export async function getAllUsers() {
-    return await prisma.user.findMany();
+export async function getAllUsers(page?: number, limit?: number) {
+    if (page && limit) {
+        const skip = (page - 1) * limit
+        return await prisma.user.findMany({
+            skip,
+            take: limit
+        })
+    }
+    return await prisma.user.findMany()
 }
 
 export async function promoteUser(id: number) {
