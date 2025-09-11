@@ -72,6 +72,7 @@ CLOUDINARY_NAME=your_cloudinary_cloud_name
 CLOUDINARY_APIKEY=your_cloudinary_api_key
 CLOUDINARY_SECRET=your_cloudinary_api_secret
 OPENAI_API_KEY=your_openai_api_key
+FRONTEND_URL=https://your-frontend-domain.com
 ```
 
 - Replace the values with your actual credentials.
@@ -79,6 +80,7 @@ OPENAI_API_KEY=your_openai_api_key
 - `JWT_SECRET` is any random string for JWT signing.
 - Cloudinary variables are for image upload support.
 - `OPENAI_API_KEY` is for OpenAI integration.
+- `FRONTEND_URL` is the URL of your frontend application (defaults to http://localhost:5000 if not set).
 
 ---
 
