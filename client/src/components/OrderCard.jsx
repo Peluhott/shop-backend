@@ -8,7 +8,7 @@ function OrderCard({ order, onStatusChange }) {
   const handleMarkFilledOrUnfilled = async () => {
     const token = localStorage.getItem('token');
     try {
-      const res = await fetch(`http://localhost:5000/order/markFilledOrUnfilled/${order.id}`, {
+      const res = await fetch(`https://shop-backend-4x9h.onrender.com/order/markFilledOrUnfilled/${order.id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',

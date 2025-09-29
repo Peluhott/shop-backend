@@ -8,7 +8,7 @@ function UserOrderPage() {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    fetch(`http://localhost:5000/order/user/${id}`, {
+    fetch(`https://shop-backend-4x9h.onrender.com/order/user/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`
       }

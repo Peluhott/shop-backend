@@ -37,12 +37,12 @@ function CreateProductPage() {
     formData.append('name', form.name);
     formData.append('category', form.category);
     formData.append('description', form.description);
-    formData.append('price', parseFloat(form.price)); // Ensure price is float
-    formData.append('stock', parseInt(form.stock, 10)); // Ensure stock is int
+    formData.append('price', parseFloat(form.price));
+    formData.append('stock', parseInt(form.stock, 10));
     formData.append('picture', file);
 
     try {
-      const res = await fetch('http://localhost:5000/product/create', {
+      const res = await fetch('https://shop-backend-4x9h.onrender.com/product/create', {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`

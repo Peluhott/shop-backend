@@ -11,7 +11,7 @@ function ProductCard({ product, onDelete }) {
     setDeleting(true);
     const token = localStorage.getItem('token');
     try {
-      const res = await fetch(`http://localhost:5000/product/remove/${product.id}`, {
+      const res = await fetch(`https://shop-backend-4x9h.onrender.com/product/remove/${product.id}`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${token}`
@@ -23,7 +23,7 @@ function ProductCard({ product, onDelete }) {
         alert('Failed to delete product.');
       }
     } catch (err) {
-      alert(err,'Error deleting product.');
+      alert(err, 'Error deleting product.');
     }
     setDeleting(false);
   };

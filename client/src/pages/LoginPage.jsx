@@ -31,7 +31,7 @@ function LoginPage() {
     setError('');
     setSuccess(false);
     try {
-      const res = await fetch('http://localhost:5000/user/login', {
+      const res = await fetch('https://shop-backend-4x9h.onrender.com/user/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password })

@@ -16,28 +16,28 @@ function HomePage() {
   useEffect(() => {
     const token = localStorage.getItem('token');
 
-    fetch('http://localhost:5000/product/analytics', {
+    fetch('https://shop-backend-4x9h.onrender.com/product/analytics', {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(res => res.json())
       .then(data => setAnalytics(data))
       .catch(err => console.error('Failed to fetch store analytics:', err));
 
-    fetch('http://localhost:5000/order/average', {
+    fetch('https://shop-backend-4x9h.onrender.com/order/average', {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(res => res.json())
       .then(data => setAverageOrder(data.averageOrderAmount))
       .catch(err => console.error('Failed to fetch average order amount:', err));
 
-    fetch('http://localhost:5000/product/top-dollar?limit=1', {
+    fetch('https://shop-backend-4x9h.onrender.com/product/top-dollar?limit=1', {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(res => res.json())
       .then(data => setTopDollar(data[0]))
       .catch(err => console.error('Failed to fetch top dollar product:', err));
 
-    fetch('http://localhost:5000/product/top-quantity?limit=1', {
+    fetch('https://shop-backend-4x9h.onrender.com/product/top-quantity?limit=1', {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(res => res.json())

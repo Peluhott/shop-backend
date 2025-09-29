@@ -8,7 +8,7 @@ function ProductPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch('http://localhost:5000/product/all')
+    fetch('https://shop-backend-4x9h.onrender.com/product/all')
       .then(res => res.json())
       .then(data => setProducts(data))
       .catch(err => console.error('Failed to fetch products:', err));

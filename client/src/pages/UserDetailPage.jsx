@@ -7,7 +7,7 @@ function UserDetailPage() {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    fetch(`http://localhost:5000/user/info/${id}`, {
+    fetch(`https://shop-backend-4x9h.onrender.com/user/info/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`
       }
