@@ -7,6 +7,10 @@ import LoginPage from './pages/LoginPage'
 import UserPage from './pages/UserPage'
 import UserDetailPage from './pages/UserDetailPage'
 import UserOrderPage from './pages/UserOrderPage'
+import EditProductPage from './pages/EditProductPage'
+import CreateProductPage from './pages/CreateProductPage'
+import ProtectedRoute from './components/ProtectedRoute'
+import HomePage from './pages/HomePage'
 import './App.css'
 
 function App() {
@@ -15,13 +19,71 @@ function App() {
       <Navigation />
       <Container className="mt-4">
         <Routes>
-          <Route path="/orders" element={<OrdersPage />} />
-          <Route path="/products" element={<ProductPage />} />
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/user" element={<UserPage />} />
-          <Route path="/users/:id" element={<UserDetailPage />} />
-          <Route path="/users/:id/orders" element={<UserOrderPage />} />
-          {/* Add other routes here as needed */}
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <HomePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/products"
+            element={
+              <ProtectedRoute>
+                <ProductPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/orders"
+            element={
+              <ProtectedRoute>
+                <OrdersPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/products/create"
+            element={
+              <ProtectedRoute>
+                <CreateProductPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/products/edit/:id"
+            element={
+              <ProtectedRoute>
+                <EditProductPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/user"
+            element={
+              <ProtectedRoute>
+                <UserPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/users/:id"
+            element={
+              <ProtectedRoute>
+                <UserDetailPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/users/:id/orders"
+            element={
+              <ProtectedRoute>
+                <UserOrderPage />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </Container>
     </Router>
