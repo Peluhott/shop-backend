@@ -16,6 +16,9 @@ router.post('/info/upsert', authenticateJWT, userController.upsertUserInfo)
 // Admin-only: Get all users with optional pagination
 router.get('/all', authenticateJWT, checkAdmin, userController.getAllUsers)
 
+// Admin-only: Get user info by ID
+router.get('/info/:id', authenticateJWT, checkAdmin, userController.returnUserInfoById)
+
 
 
 export default router;
