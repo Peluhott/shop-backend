@@ -181,3 +181,24 @@ export async function getLowestSellingProductsRevenue(limit: number) {
     
   }));
 }
+
+/**
+ * Get total dollar amount sold by the store (sum of all ordered product unit_price).
+ */
+export async function getTotalDollarSoldStore() {
+  const result = await prisma.ordered_Products.aggregate({
+    _sum: { unit_price: true }
+  });
+  return result._sum.unit_price ?? 0;
+}
+
+/**
+ * Get total quantity of items sold by the store (sum of all ordered products).
+ */
+export async function getTotalQuantitySoldStore() {
+  const result = await prisma.ordered_Products.aggregate({
+    _count: { product_id: true }
+  });
+  return result._count.product_id ?? 0;
+}
+

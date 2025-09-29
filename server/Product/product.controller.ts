@@ -1,4 +1,5 @@
 import * as productService from './product.service'
+import * as productRepo from './product.repository';
 import { Request, Response } from 'express'
 
 export async function createProduct(req: Request, res: Response) {
@@ -101,5 +102,20 @@ export async function getTopSellingProductsByAmount(req: Request, res: Response)
     } catch (error) {
         console.log('trouble retrieving top products by quantity');
         return res.status(500).json({ message: 'error retrieving top products by quantity from database' });
+    }
+}
+
+export async function getStoreAnalytics(req: Request, res: Response) {
+    try {
+        const [totalDollarSold, totalQuantitySold] = await Promise.all([
+            productRepo.getTotalDollarSoldStore(),
+            productRepo.getTotalQuantitySoldStore()
+        ]);
+        res.json({
+            totalDollarSold,
+            totalQuantitySold
+        });
+    } catch (err) {
+        res.status(500).json({ message: 'Failed to get store analytics' });
     }
 }

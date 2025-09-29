@@ -40,6 +40,7 @@ productRouter.delete('/remove/:productId', authenticateJWT, checkAdmin, retrieve
 
 productRouter.get('/top-quantity', authenticateJWT, checkAdmin, productController.getTopSellingProducts)
 productRouter.get('/top-dollar', authenticateJWT, checkAdmin, productController.getTopSellingProductsByAmount)
+productRouter.get('/analytics', authenticateJWT, checkAdmin, productController.getStoreAnalytics);
 
 // add pagination
 //reorder routes
