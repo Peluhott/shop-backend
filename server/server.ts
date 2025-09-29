@@ -1,9 +1,8 @@
 import app from './app'
 
-//created this for quicker testing 
+// Use Render's provided port or default to 5000 for local development
+const port = process.env.PORT || 5000;
 
-const port = 5000;
-
-app.listen(port, () =>{
-    console.log('server is listening on port 5000')
+app.listen(port, () => {
+    console.log(`server is listening on port ${port}`)
 })
