@@ -20,7 +20,7 @@ app.use(express.urlencoded({extended:true}))
 app.use(passport.initialize())
 
 app.use(cors({
-    origin: process.env.CLIENT_ORIGIN || 'http://localhost:5173',
+    origin: process.env.CLIENT_ORIGIN || 'shop-backend-git-main-peluhots-projects.vercel.app',
     credentials: true
 }))
 app.use('/user', userRoutes);
