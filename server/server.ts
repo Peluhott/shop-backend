@@ -1,7 +1,7 @@
 import app from './app'
 
-// Use Render's provided port or default to 5000 for local development
-const port = process.env.PORT || 4000;
-app.listen(port, () => {
-  console.log(`API on ${port}`);
+const port = Number(process.env.PORT) || 4000;
+const host = "0.0.0.0";
+app.listen(port, host, () => {
+  console.log(`API listening on ${host}:${port}`);
 });
