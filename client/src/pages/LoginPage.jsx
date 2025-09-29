@@ -20,6 +20,12 @@ function LoginPage() {
     }
   }, [navigate]);
 
+  useEffect(() => {
+    if (success) {
+      navigate('/');
+    }
+  }, [success, navigate]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
