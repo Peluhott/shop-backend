@@ -47,6 +47,23 @@ export async function returnUserInfo(req: Request, res: Response) {
     }
 }
 
+export async function returnUserInfoById(req: Request, res: Response) {
+    const userId = req.params.id ? parseInt(req.params.id, 10) : undefined;
+    if (!userId) {
+        return res.status(400).json({ message: 'user id param required' });
+    }
+    try {
+        const info = await userService.getUserInfoService(userId);
+        if (!info) {
+            return res.status(404).json({ message: 'info not found for user' });
+        }
+        return res.status(200).json(info);
+    } catch (error) {
+        console.log('failed to retrieve info', error);
+        return res.status(500).json({ message: 'failed to retrieve info' });
+    }
+}
+
 export async function upsertUserInfo(req: Request, res: Response) {
     if (!req.user || !req.user.id) {
         return res.status(401).json({ message: 'Unauthorized' })
