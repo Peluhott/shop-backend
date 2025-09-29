@@ -2,6 +2,7 @@
 
 A modern, full-stack e-commerce platform built as a learning and portfolio project.  
 This repository contains the **backend RESTful API** (Node.js, TypeScript, PostgreSQL, Prisma), with plans for a React frontend for both users and admins.
+To use the website the username is "admin" no spaces or capital, and the password is "password"
 
 ---
 
