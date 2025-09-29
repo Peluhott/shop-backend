@@ -1,4 +1,5 @@
 import * as orderService from './order.service'
+import * as orderRepo from './order.repository'
 import { Request, Response } from 'express'
 
 export async function retrieveOrders(req: Request, res: Response) {
@@ -93,6 +94,16 @@ export async function markFilledOrUnfilled(req: Request, res: Response) {
     } catch (error) {
         console.log('error marking order', error)
         return res.status(500).json({ message: 'order marking failed' })
+    }
+}
+
+export async function getAverageOrderAmount(req: Request, res: Response) {
+    try {
+        const avg = await orderRepo.getAverageOrderAmount();
+        return res.status(200).json({ averageOrderAmount: avg });
+    } catch (error) {
+        console.log('error getting average order amount', error);
+        return res.status(500).json({ message: 'failed to get average order amount' });
     }
 }
 

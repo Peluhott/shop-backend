@@ -241,3 +241,13 @@ export async function getTotalQuantityForPeriod(start?: Date, end?: Date) {
     }
     return await prisma.ordered_Products.count({ where })
 }
+
+export async function getAverageOrderAmount() {
+    const result = await prisma.order.aggregate({
+        _sum: { total: true },
+        _count: { id: true }
+    });
+    const totalRevenue = result._sum.total ?? 0;
+    const orderCount = result._count.id ?? 0;
+    return orderCount > 0 ? totalRevenue / orderCount : 0;
+}

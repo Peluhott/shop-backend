@@ -12,5 +12,6 @@ orderRouter.get('/all',authenticateJWT, checkAdmin,orderController.retrieveAllOr
 orderRouter.get('/unfilled',authenticateJWT, checkAdmin, orderController.retrieveAllUnfilled)
 orderRouter.get('/filled',authenticateJWT, checkAdmin, orderController.retrieveFilled)
 orderRouter.patch('/markFilledOrUnfilled/:id',authenticateJWT, checkAdmin,markFilledOrUnfilledValidation, validateRequest,orderController.markFilledOrUnfilled)
+orderRouter.get('/average', authenticateJWT, checkAdmin, orderController.getAverageOrderAmount);
 
 export default orderRouter;
