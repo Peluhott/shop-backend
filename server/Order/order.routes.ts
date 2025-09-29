@@ -7,6 +7,7 @@ import { validateRequest } from '../middleware/validateRequest';
 import { checkAdmin } from '../middleware/isAdmin';
 // don't forget to add middleware later to check for admin status for certain routes
 orderRouter.get('/user', authenticateJWT, orderController.retrieveOrders)
+orderRouter.get('/user/:id', authenticateJWT, checkAdmin, orderController.retrieveOrdersByUserId)
 orderRouter.get('/all',authenticateJWT, checkAdmin,orderController.retrieveAllOrders)
 orderRouter.get('/unfilled',authenticateJWT, checkAdmin, orderController.retrieveAllUnfilled)
 orderRouter.get('/filled',authenticateJWT, checkAdmin, orderController.retrieveFilled)

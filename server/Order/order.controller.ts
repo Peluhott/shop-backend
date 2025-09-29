@@ -17,6 +17,23 @@ export async function retrieveOrders(req: Request, res: Response) {
     }
 }
 
+export async function retrieveOrdersByUserId(req: Request, res: Response) {
+    const userId = req.params.id ? parseInt(req.params.id, 10) : undefined;
+    if (!userId) {
+        return res.status(400).json({ message: 'userId param required' });
+    }
+    try {
+        const orders = await orderService.getOrdersByUserId(userId);
+        if (!orders || orders.length === 0) {
+            return res.status(404).json({ message: 'no orders found for user' });
+        }
+        return res.status(200).json(orders);
+    } catch (error) {
+        console.log('error retrieving for user', error);
+        return res.status(500).json({ message: 'failed to retrieve orders' });
+    }
+}
+
 export async function retrieveAllOrders(req: Request, res: Response) {
     try {
         const page = req.query.page ? parseInt(req.query.page as string, 10) : undefined
