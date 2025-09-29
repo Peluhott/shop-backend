@@ -39,3 +39,7 @@ export async function searchProducts(search: string) {
 export async function getTopSellingProducts(limit: number) {
     return await productQueries.getTopSellingProductsQuant(limit)
 }
+
+export async function getTopSellingProductsByDollar(limit: number) {
+    return await productQueries.getTopSellingProductsRevenue(limit); // This should use your revenue logic in the repository
+}

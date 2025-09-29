@@ -91,3 +91,15 @@ export async function getTopSellingProducts(req: Request, res: Response) {
         return res.status(500).json({ message: 'error retrieving top products from database' })
     }
 }
+
+export async function getTopSellingProductsByAmount(req: Request, res: Response) {
+    const { limit } = req.query;
+    const limitNumber = parseInt(limit as string) || 5;
+    try {
+        const products = await productService.getTopSellingProductsByDollar(limitNumber);
+        return res.status(200).json(products);
+    } catch (error) {
+        console.log('trouble retrieving top products by quantity');
+        return res.status(500).json({ message: 'error retrieving top products by quantity from database' });
+    }
+}

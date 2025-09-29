@@ -1,9 +1,23 @@
 import prisma from '../utils/prisma'
 
-export async function createProduct(name: string, category: string, picture: string, description: string, price: number, stock: number) {
-    return await prisma.product.create({
-        data: { name, category, picture, description, price, stock }
-    })
+export async function createProduct(
+  name: string,
+  category: string,
+  picture: string,
+  description: string,
+  price: any,
+  stock: any
+) {
+  return await prisma.product.create({
+    data: {
+      name,
+      category,
+      picture,
+      description,
+      price: parseFloat(price), // convert to float
+      stock: parseInt(stock, 10) // convert to int
+    }
+  });
 }
 
 export async function getProductById(id: number) {
@@ -135,7 +149,7 @@ export async function getTopSellingProductsRevenue(limit: number) {
   const ids = grouped.map(g => g.product_id);
   const products = await prisma.product.findMany({
     where: { id: { in: ids } },
-    select: { id: true, name: true, price: true },
+    select: { id: true, name: true, price: true, picture: true, category: true, description: true },
   });
 
   const byId = new Map(products.map(p => [p.id, p]));
@@ -157,7 +171,7 @@ export async function getLowestSellingProductsRevenue(limit: number) {
   const ids = grouped.map(g => g.product_id);
   const products = await prisma.product.findMany({
     where: { id: { in: ids } },
-    select: { id: true, name: true, price: true },
+    select: { id: true, name: true, price: true, picture: true, category: true, description: true },
   });
 
   const byId = new Map(products.map(p => [p.id, p]));

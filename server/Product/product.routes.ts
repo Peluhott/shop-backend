@@ -12,6 +12,7 @@ import {
     searchProductValidator,
     topSellingProductValidator
 } from '../validation/productValidator'
+import { upload } from '../utils/multer' // adjust path if needed
 
 productRouter.get('/all', productController.returnAllProducts)
 
@@ -21,13 +22,24 @@ productRouter.get('/top', authenticateJWT, checkAdmin, topSellingProductValidato
 
 productRouter.get('/search', searchProductValidator, validateRequest, productController.searchProduct)
 
-productRouter.post('/create', authenticateJWT, checkAdmin, productInfoValidation, validateRequest, productController.createProduct)
+productRouter.post(
+  '/create',
+  authenticateJWT,
+  checkAdmin,
+  upload.single('picture'), // <-- multer middleware for file upload
+  productInfoValidation,
+  validateRequest,
+  productController.createProduct
+);
 
 productRouter.get('/id/:productId', retrieveProductValidator, validateRequest, productController.getProductById)
 
 productRouter.patch('/update/:id', authenticateJWT, checkAdmin, updateProductValidation, validateRequest, productController.updateProductInfo)
 
 productRouter.delete('/remove/:productId', authenticateJWT, checkAdmin, retrieveProductValidator, validateRequest, productController.deleteProduct)
+
+productRouter.get('/top-quantity', authenticateJWT, checkAdmin, productController.getTopSellingProducts)
+productRouter.get('/top-dollar', authenticateJWT, checkAdmin, productController.getTopSellingProductsByAmount)
 
 // add pagination
 //reorder routes
