@@ -316,8 +316,13 @@ await Promise.all(
     
     
     await Promise.all(
-        Array.from({length:10}).map( async () => {
-            const username = faker.internet.username()
+        Array.from({length:30}).map( async () => {
+            const username = faker.internet.username();
+            const exists = await prisma.user.findUnique({ where: { username } });
+            if (exists) {
+              console.log(`Username ${username} already exists, skipping.`);
+              return;
+            }
             const email = faker.internet.email()
             const location = faker.helpers.arrayElement(locations);
             const age = faker.number.int({min:18, max:65})
@@ -342,7 +347,7 @@ await Promise.all(
             const usedProductIds = new Set();
 
             await Promise.all(
-              Array.from({ length: 3 }).map(async () => {
+              Array.from({ length: 5 }).map(async () => {
                 let product;
                 do {
                   product = faker.helpers.arrayElement(products);
