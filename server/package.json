@@ -41,6 +41,8 @@
     "typescript": "^5.8.3"
   },
   "scripts": {
+    "build": "tsc",
+    "start": "node dist/server.js",
     "test": "jest --verbose"
   }
 }
