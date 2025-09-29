@@ -20,7 +20,7 @@ app.use(express.urlencoded({extended:true}))
 app.use(passport.initialize())
 
 app.use(cors({
-  origin: process.env.CLIENT_ORIGIN || 'https://shop-frontend-yourproject.vercel.app',
+  origin: process.env.CLIENT_ORIGIN || 'https://shop-backend-gamma.vercel.app',
   credentials: true
 }))
 
