@@ -52,7 +52,7 @@ function HomePage() {
         <Col md="auto">
           <AnalyticCard
             title="Total Dollar Sold"
-            value={analytics ? analytics.totalDollarSold : 'Loading...'}
+            value={analytics ? analytics.totalDollarSold : 'Loading... Backend spinning up'}
             color="info"
             textColor="white"
             unit="$"
@@ -61,7 +61,7 @@ function HomePage() {
         <Col md="auto">
           <AnalyticCard
             title="Total Quantity Sold"
-            value={analytics ? analytics.totalQuantitySold : 'Loading...'}
+            value={analytics ? analytics.totalQuantitySold : 'Loading... Backend Spinning up'}
             color="warning"
             textColor="dark"
           />
