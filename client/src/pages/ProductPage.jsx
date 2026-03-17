@@ -2,13 +2,14 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from 'react-bootstrap/Button';
 import ProductCard from '../components/ProductCard';
+import { apiBaseUrl } from '../config';
 
 function ProductPage() {
   const [products, setProducts] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch('https://shop-backend-4x9h.onrender.com/product/all')
+    fetch(`${apiBaseUrl}/product/all`)
       .then(res => res.json())
       .then(data => setProducts(data))
       .catch(err => console.error('Failed to fetch products:', err));
