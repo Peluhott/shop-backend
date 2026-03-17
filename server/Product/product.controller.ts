@@ -1,5 +1,4 @@
 import * as productService from './product.service'
-import * as productRepo from './product.repository';
 import { Request, Response } from 'express'
 
 export async function createProduct(req: Request, res: Response) {
@@ -45,7 +44,6 @@ export async function deleteProduct(req: Request, res: Response) {
     }
 }
 
-// Updated to support pagination via query params
 export async function returnAllProducts(req: Request, res: Response) {
     try {
         const page = req.query.page ? parseInt(req.query.page as string, 10) : undefined
@@ -107,14 +105,8 @@ export async function getTopSellingProductsByAmount(req: Request, res: Response)
 
 export async function getStoreAnalytics(req: Request, res: Response) {
     try {
-        const [totalDollarSold, totalQuantitySold] = await Promise.all([
-            productRepo.getTotalDollarSoldStore(),
-            productRepo.getTotalQuantitySoldStore()
-        ]);
-        res.json({
-            totalDollarSold,
-            totalQuantitySold
-        });
+        const analytics = await productService.getStoreAnalytics()
+        res.json(analytics);
     } catch (err) {
         res.status(500).json({ message: 'Failed to get store analytics' });
     }
