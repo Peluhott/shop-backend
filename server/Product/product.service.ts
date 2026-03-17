@@ -1,5 +1,6 @@
 import * as productQueries from './product.repository'
 import { uploadProductImage } from '../utils/uploadImage'
+import { cachePrefixes, getOrSetCache, invalidateCachePrefixes } from '../utils/cache'
 
 export async function createProductWithImage(productData: any, file: Express.Multer.File) {
     const { name, category, description, price, stock } = productData
@@ -7,39 +8,83 @@ export async function createProductWithImage(productData: any, file: Express.Mul
     if (!name || !category || !description || isNaN(price) || isNaN(stock) || !url) {
         throw new Error('Missing or invalid product fields')
     }
-    return await productQueries.createProduct(name, category, url, description, price, stock)
+    const product = await productQueries.createProduct(name, category, url, description, price, stock)
+    await invalidateProductCache()
+    return product
 }
 
 export async function getProductById(id: number) {
-    return await productQueries.getProductById(id)
+    return await getOrSetCache(
+        `${cachePrefixes.customerProducts}id:${id}`,
+        () => productQueries.getProductById(id)
+    )
 }
 
 export async function updateProductInfo(id: number, data: any) {
     const { name, category, picture, description, price, stock } = data
-    return await productQueries.updateProduct(id, name, category, picture, description, price, stock)
+    const updatedProduct = await productQueries.updateProduct(id, name, category, picture, description, price, stock)
+    await invalidateProductCache()
+    return updatedProduct
 }
 
 export async function deleteProduct(id: number) {
-    return await productQueries.deleteProduct(id)
+    const deletedProduct = await productQueries.deleteProduct(id)
+    await invalidateProductCache()
+    return deletedProduct
 }
 
-// Updated to accept pagination params
 export async function getAllProducts(page?: number, limit?: number) {
-    return await productQueries.getAllProducts(page, limit)
+    return await getOrSetCache(
+        `${cachePrefixes.customerProducts}all:${JSON.stringify({ page: page ?? null, limit: limit ?? null })}`,
+        () => productQueries.getAllProducts(page, limit)
+    )
 }
 
 export async function getProductsByFilter(filter: string, value: any) {
-    return await productQueries.getProductByFilter(filter as any, value)
+    return await getOrSetCache(
+        `${cachePrefixes.customerProducts}filter:${JSON.stringify({ filter, value })}`,
+        () => productQueries.getProductByFilter(filter as any, value)
+    )
 }
 
 export async function searchProducts(search: string) {
-    return await productQueries.searchProductsMatching(search)
+    return await getOrSetCache(
+        `${cachePrefixes.customerProducts}search:${search}`,
+        () => productQueries.searchProductsMatching(search)
+    )
 }
 
 export async function getTopSellingProducts(limit: number) {
-    return await productQueries.getTopSellingProductsQuant(limit)
+    return await getOrSetCache(
+        `${cachePrefixes.adminProducts}top-quantity:${limit}`,
+        () => productQueries.getTopSellingProductsQuant(limit)
+    )
 }
 
 export async function getTopSellingProductsByDollar(limit: number) {
-    return await productQueries.getTopSellingProductsRevenue(limit); // This should use your revenue logic in the repository
+    return await getOrSetCache(
+        `${cachePrefixes.adminProducts}top-dollar:${limit}`,
+        () => productQueries.getTopSellingProductsRevenue(limit)
+    )
+}
+
+export async function getStoreAnalytics() {
+    return await getOrSetCache(`${cachePrefixes.adminProducts}analytics`, async () => {
+        const [totalDollarSold, totalQuantitySold] = await Promise.all([
+            productQueries.getTotalDollarSoldStore(),
+            productQueries.getTotalQuantitySoldStore()
+        ])
+
+        return {
+            totalDollarSold,
+            totalQuantitySold
+        }
+    })
+}
+
+export async function invalidateProductCache() {
+    await invalidateCachePrefixes([
+        cachePrefixes.customerProducts,
+        cachePrefixes.adminProducts
+    ])
 }

@@ -1,5 +1,7 @@
 import * as cartQueries from './cart.repository'
 import { createOrder } from '../Order/order.repository'
+import { invalidateAdminOrderCache } from '../Order/order.service'
+import { invalidateProductCache } from '../Product/product.service'
 
 export async function getCartForUser(userId: number) {
     const cart = await cartQueries.getCartByUser(userId)
@@ -64,6 +66,11 @@ export async function placeOrder(userId: number) {
   for (const pid of productIdsOrdered) {
     await cartQueries.deleteItemFromCart(cart.id, pid)
   }
+
+  await Promise.all([
+    invalidateAdminOrderCache(),
+    invalidateProductCache()
+  ])
 
   return order
 }

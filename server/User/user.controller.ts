@@ -53,7 +53,7 @@ export async function returnUserInfoById(req: Request, res: Response) {
         return res.status(400).json({ message: 'user id param required' });
     }
     try {
-        const info = await userService.getUserInfoService(userId);
+        const info = await userService.getAdminUserInfoService(userId);
         if (!info) {
             return res.status(404).json({ message: 'info not found for user' });
         }
@@ -101,5 +101,4 @@ export async function getAllUsers(req: Request, res: Response) {
         return res.status(500).json({ message: 'Failed to retrieve users' })
     }
 }
-
 
