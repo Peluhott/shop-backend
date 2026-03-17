@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
 import UserCard from '../components/UserCard';
+import { apiBaseUrl } from '../config';
 
 function UserPage() {
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    fetch('https://shop-backend-4x9h.onrender.com/user/all', {
+    fetch(`${apiBaseUrl}/user/all`, {
       headers: {
         Authorization: `Bearer ${token}`
       }

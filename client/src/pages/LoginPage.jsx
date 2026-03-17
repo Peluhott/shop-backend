@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Card from 'react-bootstrap/Card';
 import Alert from 'react-bootstrap/Alert';
+import { apiBaseUrl } from '../config';
+import { getAuthPayload, getAuthToken } from '../auth';
 
 function LoginPage() {
   const [username, setUsername] = useState('');
@@ -14,15 +16,15 @@ function LoginPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = getAuthToken();
     if (token) {
-      navigate('/');
+      navigate(getAuthPayload()?.is_admin ? '/admin' : '/shop');
     }
   }, [navigate]);
 
   useEffect(() => {
     if (success) {
-      navigate('/');
+      navigate(getAuthPayload()?.is_admin ? '/admin' : '/shop');
     }
   }, [success, navigate]);
 
@@ -31,7 +33,7 @@ function LoginPage() {
     setError('');
     setSuccess(false);
     try {
-      const res = await fetch('https://shop-backend-4x9h.onrender.com/user/login', {
+      const res = await fetch(`${apiBaseUrl}/user/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password })
@@ -53,7 +55,7 @@ function LoginPage() {
     <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '80vh' }}>
       <Card style={{ width: '22rem', padding: '1rem' }}>
         <Card.Body>
-          <Card.Title className="mb-4 text-center">Admin Login</Card.Title>
+          <Card.Title className="mb-4 text-center">Login</Card.Title>
           {error && <Alert variant="danger">{error}</Alert>}
           {success && <Alert variant="success">Login successful!</Alert>}
           <Form onSubmit={handleSubmit}>
@@ -83,6 +85,9 @@ function LoginPage() {
               Login
             </Button>
           </Form>
+          <div className="mt-3 text-center">
+            <Link to="/register">Create an account</Link>
+          </div>
         </Card.Body>
       </Card>
     </div>

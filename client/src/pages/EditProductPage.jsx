@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
+import { apiBaseUrl } from '../config';
 
 function EditProductPage() {
   const { id } = useParams();
@@ -18,7 +19,7 @@ function EditProductPage() {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    fetch(`https://shop-backend-4x9h.onrender.com/product/id/${id}`, {
+    fetch(`${apiBaseUrl}/product/id/${id}`, {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(res => res.json())
@@ -50,7 +51,7 @@ function EditProductPage() {
       stock: parseInt(form.stock, 10)
     };
     try {
-      const res = await fetch(`https://shop-backend-4x9h.onrender.com/product/update/${id}`, {
+      const res = await fetch(`${apiBaseUrl}/product/update/${id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',

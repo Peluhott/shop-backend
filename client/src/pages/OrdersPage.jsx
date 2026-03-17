@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import OrderCard from '../components/OrderCard'
 import Dropdown from 'react-bootstrap/Dropdown'
 import DropdownButton from 'react-bootstrap/DropdownButton'
+import { apiBaseUrl } from '../config'
 
 function OrdersPage() {
   const [orders, setOrders] = useState([])
@@ -10,7 +11,7 @@ function OrdersPage() {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    fetch('https://shop-backend-4x9h.onrender.com/order/all', {
+    fetch(`${apiBaseUrl}/order/all`, {
       headers: {
         Authorization: `Bearer ${token}`
       }

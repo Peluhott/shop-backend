@@ -6,6 +6,7 @@ import QuantCard from '../components/QuantCard';
 import Card from 'react-bootstrap/Card';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import { apiBaseUrl } from '../config';
 
 function HomePage() {
   const [analytics, setAnalytics] = useState(null);
@@ -16,28 +17,28 @@ function HomePage() {
   useEffect(() => {
     const token = localStorage.getItem('token');
 
-    fetch('https://shop-backend-4x9h.onrender.com/product/analytics', {
+    fetch(`${apiBaseUrl}/product/analytics`, {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(res => res.json())
       .then(data => setAnalytics(data))
       .catch(err => console.error('Failed to fetch store analytics:', err));
 
-    fetch('https://shop-backend-4x9h.onrender.com/order/average', {
+    fetch(`${apiBaseUrl}/order/average`, {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(res => res.json())
       .then(data => setAverageOrder(data.averageOrderAmount))
       .catch(err => console.error('Failed to fetch average order amount:', err));
 
-    fetch('https://shop-backend-4x9h.onrender.com/product/top-dollar?limit=1', {
+    fetch(`${apiBaseUrl}/product/top-dollar?limit=1`, {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(res => res.json())
       .then(data => setTopDollar(data[0]))
       .catch(err => console.error('Failed to fetch top dollar product:', err));
 
-    fetch('https://shop-backend-4x9h.onrender.com/product/top-quantity?limit=1', {
+    fetch(`${apiBaseUrl}/product/top-quantity?limit=1`, {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(res => res.json())
