@@ -21,13 +21,24 @@ export async function clearCart(cartId: number){
 }
 
 export async function addItemToCart(cartId: number, productId: number, quantity: number, unitprice: number){
-    await prisma.cartItem.create({
-        data: {
+    await prisma.cartItem.upsert({
+        where: {
+            cart_id_product_id: {
+                cart_id: cartId,
+                product_id: productId
+            }
+        },
+        update: {
+            quantity: {
+                increment: quantity
+            },
+            unitprice
+        },
+        create: {
             cart_id: cartId,
             product_id: productId,
-            quantity: quantity,
-            unitprice: unitprice
-            
+            quantity,
+            unitprice
         }
     })
 }
