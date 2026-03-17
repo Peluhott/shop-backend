@@ -64,20 +64,27 @@ This project aims to deliver a robust, scalable, and secure shop platform with:
 
 ## Environment Variables
 
-Create a `.env` file in the project root with the following variables:
+Create a `server/.env` file from `server/.env.example` and fill in the following variables:
 
 ```env
-devDATABASE_URL=postgresql://<user>:<password>@<host>:<port>/<database>
+DATABASE_URL=postgresql://<user>:<password>@<host>:<port>/<database>
 JWT_SECRET=your_jwt_secret
 CLOUDINARY_NAME=your_cloudinary_cloud_name
 CLOUDINARY_APIKEY=your_cloudinary_api_key
 CLOUDINARY_SECRET=your_cloudinary_api_secret
+CLIENT_ORIGIN=http://localhost:5173
+PORT=4000
+REDIS_URL=redis://localhost:6379
 ```
 
 - Replace the values with your actual credentials.
-- `devDATABASE_URL` is your PostgreSQL connection string.
+- `DATABASE_URL` is your PostgreSQL connection string.
 - `JWT_SECRET` is any random string for JWT signing.
 - Cloudinary variables are for image upload support.
+- `CLIENT_ORIGIN` is the frontend origin allowed by CORS.
+- `PORT` is the backend port.
+- `REDIS_URL` is used for response caching. You can also use `REDIS_HOST`, `REDIS_PORT`, and `REDIS_PASSWORD` instead.
+- For the frontend, create `client/.env` from `client/.env.example` and set `VITE_API_BASE_URL`.
 
 ---
 
