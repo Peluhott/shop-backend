@@ -1,18 +1,19 @@
 import { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
+import { apiBaseUrl } from '../config';
+import { getAuthToken } from '../auth';
 
-function OrderCard({ order, onStatusChange }) {
+function OrderCard({ order, onStatusChange, readOnly = false }) {
   const [filled, setFilled] = useState(order.filled);
 
   const handleMarkFilledOrUnfilled = async () => {
-    const token = localStorage.getItem('token');
     try {
-      const res = await fetch(`https://shop-backend-4x9h.onrender.com/order/markFilledOrUnfilled/${order.id}`, {
+      const res = await fetch(`${apiBaseUrl}/order/markFilledOrUnfilled/${order.id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${getAuthToken()}`
         }
       });
       if (res.ok) {
@@ -38,9 +39,11 @@ function OrderCard({ order, onStatusChange }) {
           Created At: {new Date(order.created_at).toLocaleString()}<br />
           Filled: {filled ? 'Yes' : 'No'}
         </Card.Text>
-        <Button variant="primary" onClick={handleMarkFilledOrUnfilled}>
-          Mark filled or unfilled
-        </Button>
+        {!readOnly ? (
+          <Button variant="primary" onClick={handleMarkFilledOrUnfilled}>
+            Mark filled or unfilled
+          </Button>
+        ) : null}
       </Card.Body>
     </Card>
   );

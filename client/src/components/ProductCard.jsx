@@ -2,6 +2,7 @@ import { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import { Link } from 'react-router-dom';
+import { apiBaseUrl } from '../config';
 
 function ProductCard({ product, onDelete }) {
   const [deleting, setDeleting] = useState(false);
@@ -11,7 +12,7 @@ function ProductCard({ product, onDelete }) {
     setDeleting(true);
     const token = localStorage.getItem('token');
     try {
-      const res = await fetch(`https://shop-backend-4x9h.onrender.com/product/remove/${product.id}`, {
+      const res = await fetch(`${apiBaseUrl}/product/remove/${product.id}`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${token}`
