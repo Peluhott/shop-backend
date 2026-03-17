@@ -1,5 +1,4 @@
 import * as orderService from './order.service'
-import * as orderRepo from './order.repository'
 import { Request, Response } from 'express'
 
 export async function retrieveOrders(req: Request, res: Response) {
@@ -24,7 +23,7 @@ export async function retrieveOrdersByUserId(req: Request, res: Response) {
         return res.status(400).json({ message: 'userId param required' });
     }
     try {
-        const orders = await orderService.getOrdersByUserId(userId);
+        const orders = await orderService.getAdminOrdersByUserId(userId);
         if (!orders || orders.length === 0) {
             return res.status(404).json({ message: 'no orders found for user' });
         }
@@ -99,13 +98,11 @@ export async function markFilledOrUnfilled(req: Request, res: Response) {
 
 export async function getAverageOrderAmount(req: Request, res: Response) {
     try {
-        const avg = await orderRepo.getAverageOrderAmount();
+        const avg = await orderService.getAverageOrderAmount();
         return res.status(200).json({ averageOrderAmount: avg });
     } catch (error) {
         console.log('error getting average order amount', error);
         return res.status(500).json({ message: 'failed to get average order amount' });
     }
 }
-
-
 
