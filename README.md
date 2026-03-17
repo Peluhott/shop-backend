@@ -72,14 +72,12 @@ JWT_SECRET=your_jwt_secret
 CLOUDINARY_NAME=your_cloudinary_cloud_name
 CLOUDINARY_APIKEY=your_cloudinary_api_key
 CLOUDINARY_SECRET=your_cloudinary_api_secret
-OPENAI_API_KEY=your_openai_api_key
 ```
 
 - Replace the values with your actual credentials.
 - `devDATABASE_URL` is your PostgreSQL connection string.
 - `JWT_SECRET` is any random string for JWT signing.
 - Cloudinary variables are for image upload support.
-- `OPENAI_API_KEY` is for OpenAI integration.
 
 ---
 
@@ -192,5 +190,3 @@ If `page` and `limit` are omitted, all results are returned.
 - Complete the React frontend
 - Enhance testing coverage and CI/CD integration
 - Deploy to a cloud provider (e.g., Heroku, AWS, etc.)
-
-
