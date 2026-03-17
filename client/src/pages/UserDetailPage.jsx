@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { apiBaseUrl } from '../config';
 
 function UserDetailPage() {
   const { id } = useParams();
@@ -7,7 +8,7 @@ function UserDetailPage() {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    fetch(`https://shop-backend-4x9h.onrender.com/user/info/${id}`, {
+    fetch(`${apiBaseUrl}/user/info/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`
       }
