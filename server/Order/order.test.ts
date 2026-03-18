@@ -69,12 +69,13 @@ describe('GET /order/all', () => {
         expect(res.status).toBe(403)
     })
 
-    it('should return 200 and all orders if admin', async () => {
+    it('should return 200 and paginated orders if admin', async () => {
         const res = await request(app)
             .get('/order/all')
             .set('Authorization', `Bearer ${adminToken}`)
         expect(res.status).toBe(200)
-        expect(Array.isArray(res.body)).toBe(true)
+        expect(Array.isArray(res.body.data)).toBe(true)
+        expect(res.body).toHaveProperty('pagination')
     })
 })
 
@@ -91,12 +92,13 @@ describe('GET /order/unfilled', () => {
         expect(res.status).toBe(403)
     })
 
-    it('should return 200 and unfilled orders if admin', async () => {
+    it('should return 200 and paginated unfilled orders if admin', async () => {
         const res = await request(app)
             .get('/order/unfilled')
             .set('Authorization', `Bearer ${adminToken}`)
         expect(res.status).toBe(200)
-        expect(Array.isArray(res.body)).toBe(true)
+        expect(Array.isArray(res.body.data)).toBe(true)
+        expect(res.body).toHaveProperty('pagination')
     })
 })
 
@@ -113,12 +115,13 @@ describe('GET /order/filled', () => {
         expect(res.status).toBe(403)
     })
 
-    it('should return 200 and filled orders if admin', async () => {
+    it('should return 200 and paginated filled orders if admin', async () => {
         const res = await request(app)
             .get('/order/filled')
             .set('Authorization', `Bearer ${adminToken}`)
         expect(res.status).toBe(200)
-        expect(Array.isArray(res.body)).toBe(true)
+        expect(Array.isArray(res.body.data)).toBe(true)
+        expect(res.body).toHaveProperty('pagination')
     })
 })
 
