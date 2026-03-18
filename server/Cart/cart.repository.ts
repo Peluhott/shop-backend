@@ -52,7 +52,10 @@ export async function deleteItemFromCart(cartID: number, productID: number) {
 
 export async function getCartItemsByCart(cartID: number) {
     return await prisma.cartItem.findMany({
-        where: {cart_id: cartID}
+        where: {cart_id: cartID},
+        include: {
+            product: true
+        }
     })
 }
 

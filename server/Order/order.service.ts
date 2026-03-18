@@ -1,5 +1,6 @@
 import * as orderQueries from './order.repository'
 import { cachePrefixes, getOrSetCache, invalidateCachePrefixes } from '../utils/cache'
+import { normalizeCursorPagination } from '../utils/pagination'
 
 export async function getOrdersByUserId(userId: number) {
     return await orderQueries.getOrdersByUserId(userId)
@@ -12,24 +13,30 @@ export async function getAdminOrdersByUserId(userId: number) {
     )
 }
 
-export async function getAllOrders(page?: number, limit?: number) {
+export async function getAllOrders(cursor?: number, limit?: number) {
+    const pagination = normalizeCursorPagination(limit, cursor)
+
     return await getOrSetCache(
-        `${cachePrefixes.adminOrders}all:${JSON.stringify({ page: page ?? null, limit: limit ?? null })}`,
-        () => orderQueries.getAllOrders(page, limit)
+        `${cachePrefixes.adminOrders}all:${JSON.stringify({ cursor: pagination.cursor ?? null, limit: pagination.limit })}`,
+        () => orderQueries.getAllOrders(pagination.cursor, pagination.limit)
     )
 }
 
-export async function getUnfilledOrders(page?: number, limit?: number) {
+export async function getUnfilledOrders(cursor?: number, limit?: number) {
+    const pagination = normalizeCursorPagination(limit, cursor)
+
     return await getOrSetCache(
-        `${cachePrefixes.adminOrders}unfilled:${JSON.stringify({ page: page ?? null, limit: limit ?? null })}`,
-        () => orderQueries.getUnfilledOrders(page, limit)
+        `${cachePrefixes.adminOrders}unfilled:${JSON.stringify({ cursor: pagination.cursor ?? null, limit: pagination.limit })}`,
+        () => orderQueries.getUnfilledOrders(pagination.cursor, pagination.limit)
     )
 }
 
-export async function getFilledOrders(page?: number, limit?: number) {
+export async function getFilledOrders(cursor?: number, limit?: number) {
+    const pagination = normalizeCursorPagination(limit, cursor)
+
     return await getOrSetCache(
-        `${cachePrefixes.adminOrders}filled:${JSON.stringify({ page: page ?? null, limit: limit ?? null })}`,
-        () => orderQueries.getFilledOrders(page, limit)
+        `${cachePrefixes.adminOrders}filled:${JSON.stringify({ cursor: pagination.cursor ?? null, limit: pagination.limit })}`,
+        () => orderQueries.getFilledOrders(pagination.cursor, pagination.limit)
     )
 }
 

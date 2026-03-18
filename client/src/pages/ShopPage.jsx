@@ -19,13 +19,39 @@ function ShopPage() {
   const [products, setProducts] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [sortOrder, setSortOrder] = useState('default');
+  const [cursorStack, setCursorStack] = useState([null]);
+  const [pageIndex, setPageIndex] = useState(0);
+  const [pagination, setPagination] = useState({
+    nextCursor: null,
+    hasNextPage: false
+  });
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    fetch(`${apiBaseUrl}/product/all`)
+    const params = new URLSearchParams({ limit: '9' });
+    const cursor = cursorStack[pageIndex];
+
+    if (selectedCategory !== 'all') {
+      params.set('category', selectedCategory);
+    }
+
+    if (cursor) {
+      params.set('cursor', String(cursor));
+    }
+
+    setIsLoading(true);
+    fetch(`${apiBaseUrl}/product/all?${params.toString()}`)
       .then((res) => res.json())
-      .then((data) => setProducts(Array.isArray(data) ? data : []))
-      .catch(() => setProducts([]));
-  }, []);
+      .then((data) => {
+        setProducts(Array.isArray(data?.data) ? data.data : []);
+        setPagination(data?.pagination ?? { nextCursor: null, hasNextPage: false });
+      })
+      .catch(() => {
+        setProducts([]);
+        setPagination({ nextCursor: null, hasNextPage: false });
+      })
+      .finally(() => setIsLoading(false));
+  }, [cursorStack, pageIndex, selectedCategory]);
 
   const visibleProducts = [...products]
     .filter((product) => selectedCategory === 'all' || product.category === selectedCategory)
@@ -54,7 +80,11 @@ function ShopPage() {
                   <Button
                     key={category.value}
                     variant={selectedCategory === category.value ? 'dark' : 'outline-dark'}
-                    onClick={() => setSelectedCategory(category.value)}
+                    onClick={() => {
+                      setSelectedCategory(category.value);
+                      setCursorStack([null]);
+                      setPageIndex(0);
+                    }}
                   >
                     {category.label}
                   </Button>
@@ -69,7 +99,7 @@ function ShopPage() {
             <div>
               <h1 className="h2 mb-1">Shop</h1>
               <p className="text-muted mb-0">
-                {visibleProducts.length} product{visibleProducts.length === 1 ? '' : 's'} shown
+                {visibleProducts.length} product{visibleProducts.length === 1 ? '' : 's'} on this page
               </p>
             </div>
 
@@ -83,7 +113,13 @@ function ShopPage() {
             </Form.Group>
           </div>
 
-          {visibleProducts.length === 0 ? (
+          {isLoading ? (
+            <Card className="border-0 shadow-sm rounded-4">
+              <Card.Body className="p-4">
+                <p className="mb-0">Loading products...</p>
+              </Card.Body>
+            </Card>
+          ) : visibleProducts.length === 0 ? (
             <Card className="border-0 shadow-sm rounded-4">
               <Card.Body className="p-4">
                 <p className="mb-0">No products found for this category.</p>
@@ -98,6 +134,37 @@ function ShopPage() {
               ))}
             </Row>
           )}
+
+          <div className="d-flex justify-content-between align-items-center mt-4">
+            <Button
+              variant="outline-dark"
+              disabled={pageIndex === 0 || isLoading}
+              onClick={() => setPageIndex((currentPage) => currentPage - 1)}
+            >
+              Previous
+            </Button>
+            <span className="text-muted">Page {pageIndex + 1}</span>
+            <Button
+              variant="dark"
+              disabled={!pagination.hasNextPage || isLoading}
+              onClick={() => {
+                if (!pagination.nextCursor) {
+                  return;
+                }
+
+                setCursorStack((currentStack) => {
+                  if (currentStack[pageIndex + 1] === pagination.nextCursor) {
+                    return currentStack;
+                  }
+
+                  return [...currentStack.slice(0, pageIndex + 1), pagination.nextCursor];
+                });
+                setPageIndex((currentPage) => currentPage + 1);
+              }}
+            >
+              Next
+            </Button>
+          </div>
         </Col>
       </Row>
     </Container>

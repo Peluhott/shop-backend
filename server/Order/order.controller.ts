@@ -36,12 +36,9 @@ export async function retrieveOrdersByUserId(req: Request, res: Response) {
 
 export async function retrieveAllOrders(req: Request, res: Response) {
     try {
-        const page = req.query.page ? parseInt(req.query.page as string, 10) : undefined
+        const cursor = req.query.cursor ? parseInt(req.query.cursor as string, 10) : undefined
         const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : undefined
-        const orders = await orderService.getAllOrders(page, limit)
-        if (!orders || orders.length === 0) {
-            return res.status(404).json({ message: 'no orders found' })
-        }
+        const orders = await orderService.getAllOrders(cursor, limit)
         return res.status(200).json(orders)
     } catch (error) {
         console.log('error retrieving all orders', error)
@@ -51,12 +48,9 @@ export async function retrieveAllOrders(req: Request, res: Response) {
 
 export async function retrieveAllUnfilled(req: Request, res: Response) {
     try {
-        const page = req.query.page ? parseInt(req.query.page as string, 10) : undefined
+        const cursor = req.query.cursor ? parseInt(req.query.cursor as string, 10) : undefined
         const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : undefined
-        const orders = await orderService.getUnfilledOrders(page, limit)
-        if (!orders || orders.length === 0) {
-            return res.status(404).json({ message: 'no orders found' })
-        }
+        const orders = await orderService.getUnfilledOrders(cursor, limit)
         return res.status(200).json(orders)
     } catch (error) {
         console.log("error retrieving unfilled", error)
@@ -66,12 +60,9 @@ export async function retrieveAllUnfilled(req: Request, res: Response) {
 
 export async function retrieveFilled(req: Request, res: Response) {
     try {
-        const page = req.query.page ? parseInt(req.query.page as string, 10) : undefined
+        const cursor = req.query.cursor ? parseInt(req.query.cursor as string, 10) : undefined
         const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : undefined
-        const orders = await orderService.getFilledOrders(page, limit)
-        if (!orders || orders.length === 0) {
-            return res.status(404).json({ message: 'no orders found' })
-        }
+        const orders = await orderService.getFilledOrders(cursor, limit)
         return res.status(200).json(orders)
     } catch (error) {
         console.log("error retrieving filled orders")
@@ -105,4 +96,3 @@ export async function getAverageOrderAmount(req: Request, res: Response) {
         return res.status(500).json({ message: 'failed to get average order amount' });
     }
 }
-

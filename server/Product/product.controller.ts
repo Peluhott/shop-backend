@@ -46,10 +46,13 @@ export async function deleteProduct(req: Request, res: Response) {
 
 export async function returnAllProducts(req: Request, res: Response) {
     try {
-        const page = req.query.page ? parseInt(req.query.page as string, 10) : undefined
+        const cursor = req.query.cursor ? parseInt(req.query.cursor as string, 10) : undefined
         const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : undefined
+        const category = req.query.category && req.query.category !== 'all'
+            ? req.query.category as string
+            : undefined
 
-        const products = await productService.getAllProducts(page, limit)
+        const products = await productService.getAllProducts(cursor, limit, category)
         return res.status(200).json(products)
     } catch (error) {
         console.log('failed to retrieve products', error)

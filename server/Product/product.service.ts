@@ -1,6 +1,7 @@
 import * as productQueries from './product.repository'
 import { uploadProductImage } from '../utils/uploadImage'
 import { cachePrefixes, getOrSetCache, invalidateCachePrefixes } from '../utils/cache'
+import { normalizeCursorPagination } from '../utils/pagination'
 
 export async function createProductWithImage(productData: any, file: Express.Multer.File) {
     const { name, category, description, price, stock } = productData
@@ -33,10 +34,16 @@ export async function deleteProduct(id: number) {
     return deletedProduct
 }
 
-export async function getAllProducts(page?: number, limit?: number) {
+export async function getAllProducts(cursor?: number, limit?: number, category?: string) {
+    const pagination = normalizeCursorPagination(limit, cursor)
+
     return await getOrSetCache(
-        `${cachePrefixes.customerProducts}all:${JSON.stringify({ page: page ?? null, limit: limit ?? null })}`,
-        () => productQueries.getAllProducts(page, limit)
+        `${cachePrefixes.customerProducts}all:${JSON.stringify({
+            cursor: pagination.cursor ?? null,
+            limit: pagination.limit,
+            category: category ?? null
+        })}`,
+        () => productQueries.getAllProducts(pagination.cursor, pagination.limit, category)
     )
 }
 

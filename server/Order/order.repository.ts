@@ -1,4 +1,5 @@
 import prisma from '../utils/prisma'
+import { buildCursorPage } from '../utils/pagination'
 
 export async function createOrder(user_id: number, items: {productId: number, qty: number, unitprice: number}[], orderTotal: number) {
     return await prisma.$transaction(async (tx)=> {
@@ -39,15 +40,30 @@ export async function getOrderById(id: number) {
     })
 }
 
-export async function getAllOrders(page?: number, limit?: number) {
-    if (page && limit) {
-        const skip = (page - 1) * limit
-        return await prisma.order.findMany({
-            skip,
-            take: limit
-        })
+type OrderStatusFilter = 'all' | 'filled' | 'unfilled'
+
+function getOrderFilter(status: OrderStatusFilter) {
+    if (status === 'filled') {
+        return { filled: true }
     }
-    return await prisma.order.findMany()
+
+    if (status === 'unfilled') {
+        return { filled: false }
+    }
+
+    return undefined
+}
+
+export async function getAllOrders(cursor?: number, limit: number = 9, status: OrderStatusFilter = 'all') {
+    const orders = await prisma.order.findMany({
+        where: getOrderFilter(status),
+        orderBy: { id: 'desc' },
+        cursor: cursor ? { id: cursor } : undefined,
+        skip: cursor ? 1 : 0,
+        take: limit + 1
+    })
+
+    return buildCursorPage(orders, limit)
 }
 
 export async function getOrdersByUserId(userID: number) {
@@ -83,32 +99,12 @@ export async function markOrderUnfilled(id: number) {
     })
 }
 
-export async function getFilledOrders(page?: number, limit?: number) {
-    if (page && limit) {
-        const skip = (page - 1) * limit
-        return await prisma.order.findMany({
-            where: { filled: true },
-            skip,
-            take: limit
-        })
-    }
-    return await prisma.order.findMany({
-        where: { filled: true }
-    })
+export async function getFilledOrders(cursor?: number, limit: number = 9) {
+    return getAllOrders(cursor, limit, 'filled')
 }
 
-export async function getUnfilledOrders(page?: number, limit?: number) {
-    if (page && limit) {
-        const skip = (page - 1) * limit
-        return await prisma.order.findMany({
-            where: { filled: false },
-            skip,
-            take: limit
-        })
-    }
-    return await prisma.order.findMany({
-        where: { filled: false }
-    })
+export async function getUnfilledOrders(cursor?: number, limit: number = 9) {
+    return getAllOrders(cursor, limit, 'unfilled')
 }
 
 export async function getOrderBetweenDates(start: Date, end: Date, page?: number, limit?: number) {

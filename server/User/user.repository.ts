@@ -1,5 +1,6 @@
 import prisma from '../utils/prisma'
 import { UserInfoUpdate } from '../types/user.types';
+import { buildCursorPage } from '../utils/pagination';
 
 
 export async function insertUser(
@@ -62,15 +63,15 @@ export async function isUsernameTaken(username: string) {
     return !!user;
 }
 
-export async function getAllUsers(page?: number, limit?: number) {
-    if (page && limit) {
-        const skip = (page - 1) * limit
-        return await prisma.user.findMany({
-            skip,
-            take: limit
-        })
-    }
-    return await prisma.user.findMany()
+export async function getAllUsers(cursor?: number, limit: number = 9) {
+    const users = await prisma.user.findMany({
+        orderBy: { id: 'asc' },
+        cursor: cursor ? { id: cursor } : undefined,
+        skip: cursor ? 1 : 0,
+        take: limit + 1
+    })
+
+    return buildCursorPage(users, limit)
 }
 
 export async function promoteUser(id: number) {
@@ -93,4 +94,3 @@ export async function updateUserInfo(userId: number, data: UserInfoUpdate) {
     data,
   });
 }
-
