@@ -3,6 +3,7 @@ import * as userQueries from './user.repository'
 import jwt from 'jsonwebtoken'
 import { UserInfoUpdate } from '../types/user.types'
 import { cachePrefixes, getOrSetCache, invalidateCachePrefixes } from '../utils/cache'
+import { normalizeCursorPagination } from '../utils/pagination'
 
 export async function loginUserService(username: string, password: string) {
     const user = await userQueries.getUserByUsername(username)
@@ -64,10 +65,12 @@ export async function userInfoExistsService(userId: number) {
     return !!info
 }
 
-export async function getAllUsersService(page?: number, limit?: number) {
+export async function getAllUsersService(cursor?: number, limit?: number) {
+    const pagination = normalizeCursorPagination(limit, cursor)
+
     return await getOrSetCache(
-        `${cachePrefixes.adminCustomers}all:${JSON.stringify({ page: page ?? null, limit: limit ?? null })}`,
-        () => userQueries.getAllUsers(page, limit)
+        `${cachePrefixes.adminCustomers}all:${JSON.stringify({ cursor: pagination.cursor ?? null, limit: pagination.limit })}`,
+        () => userQueries.getAllUsers(pagination.cursor, pagination.limit)
     )
 }
 
