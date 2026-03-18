@@ -1,4 +1,5 @@
 import prisma from '../utils/prisma'
+import { buildCursorPage } from '../utils/pagination'
 
 export async function createProduct(
   name: string,
@@ -26,16 +27,16 @@ export async function getProductById(id: number) {
     })
 }
 
-export async function getAllProducts(page?: number, limit?: number) {
-    if (page && limit) {
-        const skip = (page - 1) * limit
-        return await prisma.product.findMany({
-            skip,
-            take: limit
-        })
-    }
-    // If no pagination, return all products
-    return await prisma.product.findMany()
+export async function getAllProducts(cursor?: number, limit: number = 9, category?: string) {
+    const products = await prisma.product.findMany({
+        where: category ? { category } : undefined,
+        orderBy: { id: 'asc' },
+        cursor: cursor ? { id: cursor } : undefined,
+        skip: cursor ? 1 : 0,
+        take: limit + 1
+    })
+
+    return buildCursorPage(products, limit)
 }
 
 export async function updateProduct(productId: number, name: string, category: string, picture: string, description: string, price: number, stock: number) {
@@ -201,4 +202,3 @@ export async function getTotalQuantitySoldStore() {
   });
   return result._count.product_id ?? 0;
 }
-

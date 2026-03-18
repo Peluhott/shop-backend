@@ -18,10 +18,11 @@ beforeAll(async () => {
 })
 
 describe('GET /product/all', () => {
-    it('should return all products with 200 status', async () => {
+    it('should return a paginated product payload with 200 status', async () => {
         const res = await request(app).get('/product/all')
         expect(res.status).toBe(200)
-        expect(Array.isArray(res.body)).toBe(true)
+        expect(Array.isArray(res.body.data)).toBe(true)
+        expect(res.body).toHaveProperty('pagination')
     })
 })
 
