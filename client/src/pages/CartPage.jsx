@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import { apiBaseUrl } from '../config';
@@ -6,42 +6,33 @@ import { getAuthToken } from '../auth';
 
 function CartPage() {
   const [items, setItems] = useState([]);
-  const [products, setProducts] = useState([]);
   const [subtotal, setSubtotal] = useState(0);
   const [placingOrder, setPlacingOrder] = useState(false);
   const token = getAuthToken();
 
-  const productsById = useMemo(
-    () => new Map(products.map((product) => [product.id, product])),
-    [products]
-  );
-
-  const loadCart = async () => {
-    const [cartRes, subtotalRes, productsRes] = await Promise.all([
+  const loadCart = useCallback(async () => {
+    const [cartRes, subtotalRes] = await Promise.all([
       fetch(`${apiBaseUrl}/cart`, {
         headers: { Authorization: `Bearer ${token}` }
       }),
       fetch(`${apiBaseUrl}/cart/subtotal`, {
         headers: { Authorization: `Bearer ${token}` }
-      }),
-      fetch(`${apiBaseUrl}/product/all`)
+      })
     ]);
 
     const cartData = await cartRes.json().catch(() => []);
     const subtotalData = await subtotalRes.json().catch(() => ({ subtotal: 0 }));
-    const productsData = await productsRes.json().catch(() => []);
 
     setItems(Array.isArray(cartData) ? cartData : []);
     setSubtotal(typeof subtotalData.subtotal === 'number' ? subtotalData.subtotal : 0);
-    setProducts(Array.isArray(productsData) ? productsData : []);
-  };
+  }, [token]);
 
   useEffect(() => {
     loadCart().catch(() => {
       setItems([]);
       setSubtotal(0);
     });
-  }, []);
+  }, [loadCart]);
 
   const updateQuantity = async (productId, quantity, increase) => {
     await fetch(`${apiBaseUrl}/cart/item/${increase ? 'increase' : 'decrease'}/${productId}`, {
@@ -93,15 +84,16 @@ function CartPage() {
         <>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem' }}>
             {items.map((item) => {
-              const product = productsById.get(item.product_id);
+              const product = item.product;
               return (
                 <Card key={item.id} style={{ width: '18rem' }}>
                   {product?.picture ? <Card.Img variant="top" src={product.picture} alt={product.name} /> : null}
                   <Card.Body>
                     <Card.Title>{product?.name || `Product #${item.product_id}`}</Card.Title>
                     <Card.Text>
+                      {product?.category ? <><strong>Category:</strong> {product.category}<br /></> : null}
                       Quantity: {item.quantity}<br />
-                      Unit Price: ${item.unitprice}<br />
+                      Unit Price: ${Number(item.unitprice).toFixed(2)}<br />
                       Item Total: ${(item.quantity * item.unitprice).toFixed(2)}
                     </Card.Text>
                     <div className="d-flex gap-2">
