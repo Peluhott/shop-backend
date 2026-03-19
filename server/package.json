@@ -38,8 +38,9 @@
     "typescript": "^5.8.3"
   },
   "scripts": {
-    "postinstall": "prisma generate",
-    "build": "tsc",
-    "start": "npx prisma migrate deploy && node dist/server.js"
+    "dev": "nodemon --watch . --ext ts --exec ts-node server.ts",
+    "start": "ts-node server.ts",
+    "test": "jest --runInBand",
+    "typecheck": "tsc --noEmit"
   }
 }
